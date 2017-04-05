@@ -1,14 +1,14 @@
 package designpaint;
 
 import java.awt.Graphics;
-import java.awt.Point;
 
 public abstract class Shape {
     protected final int id;
-    protected Point coordinates;
+    protected int coordinateX;
+    protected int coordinateY;
     protected int width;
     protected int height;
-    protected Graphics graphics;
+    protected final Graphics graphics;
     
     /**
      * Creates a shape at certain coordinates, on a canvas.
@@ -18,9 +18,10 @@ public abstract class Shape {
      * @param height Height of the shape.
      * @param graphics The graphicsgenerator used to create the shape.
      */
-    Shape(int id, Point coordinates, int width, int height, Graphics graphics) {
+    Shape(int id, int coordinateX, int coordinateY, int width, int height, Graphics graphics) {
         this.id = id;
-        this.coordinates = coordinates;
+        this.coordinateX = coordinateX;
+        this.coordinateY = coordinateY;
         this.width = width;
         this.height = height;
         this.graphics = graphics;
@@ -28,18 +29,33 @@ public abstract class Shape {
     
     /**
      * Draws the shape at it's coordinates.
-     * @param coordinates Location of the shape.
-     * @param width Witdh of the shape.
+     */
+    public void draw() {}
+    
+    /**
+     * Sets the dimmentions of the shape.
+     * @param coordinateX Location of the shape on the X-axis
+     * @param coordinateY Location of the shape on the Y-axis
+     * @param width The width of the shape.
      * @param height Height of the shape.
      */
-    public void draw(Point coordinates, int width, int height) {}
+    public void setDimensions(int coordinateX, int coordinateY, int width, int height) {
+        this.coordinateX = coordinateX;
+        this.coordinateY = coordinateY;
+        this.width = width;
+        this.height = height;
+    }
 
     public int getId() {
         return id;
     }
 
-    public Point getCoordinates() {
-        return coordinates;
+    public int getCoordinateX() {
+        return coordinateX;
+    }
+
+    public int getCoordinateY() {
+        return coordinateY;
     }
 
     public int getWidth() {
@@ -53,4 +69,5 @@ public abstract class Shape {
     public Graphics getGraphics() {
         return graphics;
     }
-}
+
+   }
