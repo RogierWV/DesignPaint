@@ -1,31 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package designpaint;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- * @author danny
- */
 public class Canvas extends JPanel{
     
      private int squareX = 50;
     private int squareY = 50;
     private int squareW = 20;
     private int squareH = 20;
+    
+    int latestID = 0;
     
     static final String SHAPE_RECTANGLE = "rectangle";
     static final String SHAPE_ELLIPSE = "ellipse";
@@ -34,6 +29,8 @@ public class Canvas extends JPanel{
     String selectedMode = "none";
     JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode");
     JLabel text = new JLabel("");
+    
+    List<Shape> shapes = new ArrayList();
     
 
     public Canvas() {
@@ -53,9 +50,9 @@ public class Canvas extends JPanel{
             public void mousePressed(MouseEvent e) {
                 //moveSquare(e.getX(),e.getY());
                 if(selectedMode == SHAPE_RECTANGLE){
-                    
+                    newShape(SHAPE_RECTANGLE, e.getX(), e.getY(), 1, 1);
                 }else if(selectedMode == SHAPE_ELLIPSE){
-                    
+                    newShape(SHAPE_ELLIPSE, e.getX(), e.getY(), 1, 1);
                 }else if(selectedMode == MODE_SELECT){
                     
                 }else if(selectedMode == MODE_MOVE){
@@ -66,7 +63,16 @@ public class Canvas extends JPanel{
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
-                moveSquare(e.getX(),e.getY());
+                //moveSquare(e.getX(),e.getY());
+                if(selectedMode == SHAPE_RECTANGLE){
+                    drawShape(SHAPE_RECTANGLE, e.getX(), e.getY());
+                }else if(selectedMode == SHAPE_ELLIPSE){
+                    drawShape(SHAPE_ELLIPSE, e.getX(), e.getY());
+                }else if(selectedMode == MODE_SELECT){
+                    
+                }else if(selectedMode == MODE_MOVE){
+                    
+                }
             }
         });
         
@@ -93,8 +99,32 @@ public class Canvas extends JPanel{
         
     }
     
-    private void newRectangle(int x, int y, int h, int w){
+    private void newShape(String shape, int x, int y, int w, int h){
+        if(shape.equals(SHAPE_RECTANGLE)){
+            Rectangle rect = new Rectangle(latestID, x, y, w, h);
+            
+            latestID++;
+            shapes.add(rect);
+        }else if(shape.equals(SHAPE_ELLIPSE)){
+            Ellipse ell = new Ellipse(latestID, x, y, w, h);
+            
+            latestID++;
+            shapes.add(ell);
+        }else {System.err.println("ERROR");}
         
+        repaint(x, y, w, h);
+    }
+    
+    private void drawShape(String shape, int w, int h){
+        
+        Shape rect = shapes.get(latestID-1);
+        int x = rect.getCoordinateX();
+        int y = rect.getCoordinateY();
+        //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
+        int height = h - y;
+        int width = w - x;
+        rect.setDimensions(x, y, width, height);
+        repaint(x, y, w, h);
     }
     
     private void moveSquare(int x, int y) {
@@ -113,12 +143,14 @@ public class Canvas extends JPanel{
     }
     
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);       
-        //g.drawString("No Shape Selected --- E for Ellipse/R for Rectangle",10,20);
-        g.setColor(Color.RED);
-        g.fillRect(squareX,squareY,squareW,squareH);
-        g.setColor(Color.BLACK);
-        g.drawRect(squareX,squareY,squareW,squareH);
+        super.paintComponent(g);
+//        g.setColor(Color.RED);
+//        g.fillRect(squareX,squareY,squareW,squareH);
+//        g.setColor(Color.BLACK);
+//        g.drawRect(squareX,squareY,squareW,squareH);
+        for (Shape shape: shapes) {
+            shape.draw(g);
+        }
     }  
     
 }
