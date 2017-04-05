@@ -5,12 +5,12 @@ import java.awt.Graphics;
 
 public class Rectangle extends Shape {
 
-    public Rectangle(int id, int coordinateX, int coordinateY, int width, int height, Graphics graphics) {
-        super(id, coordinateX, coordinateY, width, height, graphics);
+    public Rectangle(int id, int coordinateX, int coordinateY, int width, int height) {
+        super(id, coordinateX, coordinateY, width, height);
     }
 
     @Override
-    public void draw() {
+    public void draw(Graphics graphics) {
         graphics.setColor(Color.black);
         graphics.drawRect(coordinateX, coordinateX, width, height);
     }

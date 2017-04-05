@@ -8,7 +8,6 @@ public abstract class Shape {
     protected int coordinateY;
     protected int width;
     protected int height;
-    protected final Graphics graphics;
     
     /**
      * Creates a shape at certain coordinates, on a canvas.
@@ -18,19 +17,19 @@ public abstract class Shape {
      * @param height Height of the shape.
      * @param graphics The graphicsgenerator used to create the shape.
      */
-    Shape(int id, int coordinateX, int coordinateY, int width, int height, Graphics graphics) {
+    Shape(int id, int coordinateX, int coordinateY, int width, int height) {
         this.id = id;
         this.coordinateX = coordinateX;
         this.coordinateY = coordinateY;
         this.width = width;
         this.height = height;
-        this.graphics = graphics;
     }
     
     /**
      * Draws the shape at it's coordinates.
+     * @param graphics Graphics generator
      */
-    public void draw() {}
+    public void draw(Graphics graphics) {}
     
     /**
      * Sets the dimmentions of the shape.
@@ -66,8 +65,5 @@ public abstract class Shape {
         return height;
     }
 
-    public Graphics getGraphics() {
-        return graphics;
-    }
 
    }
