@@ -12,7 +12,7 @@ public class Rectangle extends Shape {
     @Override
     public void draw(Graphics graphics) {
         graphics.setColor(Color.black);
-        graphics.drawRect(coordinateX, coordinateX, width, height);
+        graphics.drawRect(coordinateX, coordinateY, width, height);
     }
     
 }

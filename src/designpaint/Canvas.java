@@ -100,11 +100,6 @@ public class Canvas extends JPanel{
     }
     
     private void newShape(String shape, int x, int y, int w, int h){
-        System.out.println("NewShape");
-        System.out.println("x: " + x);
-            System.out.println("y: " + y);
-            System.out.println("w: " + w);
-            System.out.println("h: " + h);
         if(shape.equals(SHAPE_RECTANGLE)){
             Rectangle rect = new Rectangle(latestID, x, y, w, h);
             
@@ -125,19 +120,9 @@ public class Canvas extends JPanel{
         Shape rect = shapes.get(latestID-1);
         int x = rect.getCoordinateX();
         int y = rect.getCoordinateY();
-        System.out.println("BEFORE");
-        System.out.println("x: " + x);
-            System.out.println("y: " + y);
-            System.out.println("w: " + w);
-            System.out.println("h: " + h);
         //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
         int height = h - y;
         int width = w - x;
-        System.out.println("AFTER");
-        System.out.println("x: " + x);
-            System.out.println("y: " + y);
-            System.out.println("width: " + width);
-            System.out.println("height: " + height);
         rect.setDimensions(x, y, width, height);
         repaint(x, y, w, h);
     }
