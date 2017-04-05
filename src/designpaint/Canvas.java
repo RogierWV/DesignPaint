@@ -118,13 +118,13 @@ public class Canvas extends JPanel{
     private void drawShape(String shape, int w, int h){
         
         Shape rect = shapes.get(latestID-1);
-        int x = rect.getCoordinateX();
-        int y = rect.getCoordinateY();
+        int x = rect.getOriginX();
+        int y = rect.getOriginY();
         //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
         int height = h - y;
         int width = w - x;
         rect.setDimensions(x, y, width, height);
-        repaint(x, y, w, h);
+        repaint();
     }
     
     private void moveSquare(int x, int y) {

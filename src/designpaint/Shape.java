@@ -8,6 +8,8 @@ public abstract class Shape {
     protected int coordinateY;
     protected int width;
     protected int height;
+    protected int originX;
+    protected int originY;
     
     /**
      * Creates a shape at certain coordinates, on a canvas.
@@ -15,14 +17,18 @@ public abstract class Shape {
      * @param coordinates The Coordinates of the shape.
      * @param width The width of the shape.
      * @param height Height of the shape.
-     * @param graphics The graphicsgenerator used to create the shape.
+     * @param graphics The graphics generator used to create the shape.
      */
-    Shape(int id, int coordinateX, int coordinateY, int width, int height) {
+    Shape(int id, int originX, int originY, int width, int height) {
+        
         this.id = id;
-        this.coordinateX = coordinateX;
-        this.coordinateY = coordinateY;
+        this.originX = originX;
+        this.originY = originY;
+        this.coordinateX = originX;
+        this.coordinateY = originY;
         this.width = width;
         this.height = height;
+        prepCoordinates(originX, originY, width, height);
     }
     
     /**
@@ -32,17 +38,33 @@ public abstract class Shape {
     public void draw(Graphics graphics) {}
     
     /**
-     * Sets the dimmentions of the shape.
+     * Sets the dimensions of the shape.
      * @param coordinateX Location of the shape on the X-axis
      * @param coordinateY Location of the shape on the Y-axis
      * @param width The width of the shape.
-     * @param height Height of the shape.
+     * @param height The height of the shape.
      */
     public void setDimensions(int coordinateX, int coordinateY, int width, int height) {
-        this.coordinateX = coordinateX;
-        this.coordinateY = coordinateY;
+//        this.coordinateX = coordinateX;
+//        this.coordinateY = coordinateY;
         this.width = width;
         this.height = height;
+        prepCoordinates(originX, originY, width, height);
+    }
+    
+    private void prepCoordinates(int x, int y, int w, int h){    
+        if(w < 0){
+            //X
+            coordinateX = x + w;
+            //W
+            width = Math.abs(w);
+        }
+        if(h < 0){
+            //Y
+            coordinateY = y + h;
+            //H
+            height = Math.abs(h);
+        }
     }
 
     public int getId() {
@@ -55,6 +77,14 @@ public abstract class Shape {
 
     public int getCoordinateY() {
         return coordinateY;
+    }
+    
+    public int getOriginX(){
+        return originX;
+    }
+    
+    public int getOriginY(){
+        return originY;
     }
 
     public int getWidth() {
