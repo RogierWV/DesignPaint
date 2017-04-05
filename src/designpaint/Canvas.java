@@ -3,7 +3,7 @@ package designpaint;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.List;
+import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -20,6 +20,8 @@ public class Canvas extends JPanel{
     private int squareW = 20;
     private int squareH = 20;
     
+    int latestID = 0;
+    
     static final String SHAPE_RECTANGLE = "rectangle";
     static final String SHAPE_ELLIPSE = "ellipse";
     static final String MODE_MOVE = "move";
@@ -28,7 +30,7 @@ public class Canvas extends JPanel{
     JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode");
     JLabel text = new JLabel("");
     
-    ArrayList<Shape> shapes = new ArrayList();
+    List<Shape> shapes = new ArrayList();
     
 
     public Canvas() {
@@ -50,7 +52,7 @@ public class Canvas extends JPanel{
                 if(selectedMode == SHAPE_RECTANGLE){
                     newShape(SHAPE_RECTANGLE, e.getX(), e.getY(), 1, 1);
                 }else if(selectedMode == SHAPE_ELLIPSE){
-                    
+                    newShape(SHAPE_ELLIPSE, e.getX(), e.getY(), 1, 1);
                 }else if(selectedMode == MODE_SELECT){
                     
                 }else if(selectedMode == MODE_MOVE){
@@ -98,24 +100,46 @@ public class Canvas extends JPanel{
     }
     
     private void newShape(String shape, int x, int y, int w, int h){
-        if(shape == SHAPE_RECTANGLE){
-            Rectangle rect = new Rectangle(x, y, w, h);
-        }else if(shape == SHAPE_ELLIPSE){
-            Ellipse ell = new Ellipse(x, y, w, h);
-        }
+        System.out.println("NewShape");
+        System.out.println("x: " + x);
+            System.out.println("y: " + y);
+            System.out.println("w: " + w);
+            System.out.println("h: " + h);
+        if(shape.equals(SHAPE_RECTANGLE)){
+            Rectangle rect = new Rectangle(latestID, x, y, w, h);
+            
+            latestID++;
+            shapes.add(rect);
+        }else if(shape.equals(SHAPE_ELLIPSE)){
+            Ellipse ell = new Ellipse(latestID, x, y, w, h);
+            
+            latestID++;
+            shapes.add(ell);
+        }else {System.err.println("ERROR");}
         
         repaint(x, y, w, h);
     }
     
     private void drawShape(String shape, int w, int h){
-        Shape rect = shapes.get(shapes.size() - 1);
-        int x = rect.getX();
-        int y = rect.getY();
+        
+        Shape rect = shapes.get(latestID-1);
+        int x = rect.getCoordinateX();
+        int y = rect.getCoordinateY();
+        System.out.println("BEFORE");
+        System.out.println("x: " + x);
+            System.out.println("y: " + y);
+            System.out.println("w: " + w);
+            System.out.println("h: " + h);
         //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
         int height = h - y;
         int width = w - x;
+        System.out.println("AFTER");
+        System.out.println("x: " + x);
+            System.out.println("y: " + y);
+            System.out.println("width: " + width);
+            System.out.println("height: " + height);
         rect.setDimensions(x, y, width, height);
-        repaint(x, y, h, w);
+        repaint(x, y, w, h);
     }
     
     private void moveSquare(int x, int y) {
