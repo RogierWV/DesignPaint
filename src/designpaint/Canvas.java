@@ -97,16 +97,24 @@ public class Canvas extends JPanel{
         
     }
     
-    private void newShape(String shape, int x, int y, int h, int w){
-        rect = new Rectangle(x, y, h, w);
-        repaint(x, y, h, w);
+    private void newShape(String shape, int x, int y, int w, int h){
+        if(shape == SHAPE_RECTANGLE){
+            Rectangle rect = new Rectangle(x, y, w, h);
+        }else if(shape == SHAPE_ELLIPSE){
+            Ellipse ell = new Ellipse(x, y, w, h);
+        }
+        
+        repaint(x, y, w, h);
     }
     
-    private void drawShape(String shape, int h, int w){
+    private void drawShape(String shape, int w, int h){
         Shape rect = shapes.get(shapes.size() - 1);
         int x = rect.getX();
         int y = rect.getY();
-        rect.setDimensions(x, y, h, w);
+        //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
+        int height = h - y;
+        int width = w - x;
+        rect.setDimensions(x, y, width, height);
         repaint(x, y, h, w);
     }
     
