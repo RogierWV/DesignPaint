@@ -18,6 +18,8 @@ public class DesignPaint {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "true");
+        
         JFrame frame = new JFrame("Design Patterns Paint");
 
         Canvas panel = new Canvas();
