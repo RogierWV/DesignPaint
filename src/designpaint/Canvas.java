@@ -8,10 +8,12 @@ package designpaint;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +37,8 @@ public class Canvas extends JPanel{
     JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode");
     JLabel text = new JLabel("");
     
+    ArrayList<Shape> shapes = new ArrayList();
+    
 
     public Canvas() {
         this.setFocusable(true);
@@ -53,7 +57,7 @@ public class Canvas extends JPanel{
             public void mousePressed(MouseEvent e) {
                 //moveSquare(e.getX(),e.getY());
                 if(selectedMode == SHAPE_RECTANGLE){
-                    
+                    newShape(SHAPE_RECTANGLE, e.getX(), e.getY(), 1, 1);
                 }else if(selectedMode == SHAPE_ELLIPSE){
                     
                 }else if(selectedMode == MODE_SELECT){
@@ -66,7 +70,16 @@ public class Canvas extends JPanel{
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
-                moveSquare(e.getX(),e.getY());
+                //moveSquare(e.getX(),e.getY());
+                if(selectedMode == SHAPE_RECTANGLE){
+                    drawShape(SHAPE_RECTANGLE, e.getX(), e.getY());
+                }else if(selectedMode == SHAPE_ELLIPSE){
+                    drawShape(SHAPE_ELLIPSE, e.getX(), e.getY());
+                }else if(selectedMode == MODE_SELECT){
+                    
+                }else if(selectedMode == MODE_MOVE){
+                    
+                }
             }
         });
         
@@ -93,8 +106,17 @@ public class Canvas extends JPanel{
         
     }
     
-    private void newRectangle(int x, int y, int h, int w){
-        
+    private void newShape(String shape, int x, int y, int h, int w){
+        rect = new Rectangle(x, y, h, w);
+        repaint(x, y, h, w);
+    }
+    
+    private void drawShape(String shape, int h, int w){
+        Shape rect = shapes.get(shapes.size() - 1);
+        int x = rect.getX();
+        int y = rect.getY();
+        rect.setDimensions(x, y, h, w);
+        repaint(x, y, h, w);
     }
     
     private void moveSquare(int x, int y) {
@@ -113,12 +135,14 @@ public class Canvas extends JPanel{
     }
     
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);       
-        //g.drawString("No Shape Selected --- E for Ellipse/R for Rectangle",10,20);
-        g.setColor(Color.RED);
-        g.fillRect(squareX,squareY,squareW,squareH);
-        g.setColor(Color.BLACK);
-        g.drawRect(squareX,squareY,squareW,squareH);
+        super.paintComponent(g);
+//        g.setColor(Color.RED);
+//        g.fillRect(squareX,squareY,squareW,squareH);
+//        g.setColor(Color.BLACK);
+//        g.drawRect(squareX,squareY,squareW,squareH);
+        for (Shape shape: shapes) {
+            shape.draw(g);
+        }
     }  
     
 }
