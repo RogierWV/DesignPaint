@@ -22,11 +22,19 @@ public class Canvas extends JPanel{
     
     int latestID = 0;
     
-    static final String SHAPE_RECTANGLE = "rectangle";
-    static final String SHAPE_ELLIPSE = "ellipse";
-    static final String MODE_MOVE = "move";
-    static final String MODE_SELECT = "select";
-    String selectedMode = "none";
+//    static final String SHAPE_RECTANGLE = "rectangle";
+//    static final String SHAPE_ELLIPSE = "ellipse";
+//    static final String MODE_MOVE = "move";
+//    static final String MODE_SELECT = "select";
+    static enum Mode {
+        none,
+        rectangle,
+        ellipse,
+        move,
+        select
+    }
+//    String selectedMode = "none";
+    Mode selectedMode = Mode.none;
     JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode");
     JLabel text = new JLabel("");
     
@@ -49,14 +57,20 @@ public class Canvas extends JPanel{
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 //moveSquare(e.getX(),e.getY());
-                if(selectedMode == SHAPE_RECTANGLE){
-                    newShape(SHAPE_RECTANGLE, e.getX(), e.getY(), 1, 1);
-                }else if(selectedMode == SHAPE_ELLIPSE){
-                    newShape(SHAPE_ELLIPSE, e.getX(), e.getY(), 1, 1);
-                }else if(selectedMode == MODE_SELECT){
-                    
-                }else if(selectedMode == MODE_MOVE){
-                    
+                if(null != selectedMode) 
+                switch (selectedMode) {
+                    case rectangle:
+                        newShape(Mode.rectangle, e.getX(), e.getY(), 1, 1);
+                        break;
+                    case ellipse:
+                        newShape(Mode.ellipse, e.getX(), e.getY(), 1, 1);
+                        break;
+                    case select:
+                        break;
+                    case move:
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -64,14 +78,20 @@ public class Canvas extends JPanel{
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
                 //moveSquare(e.getX(),e.getY());
-                if(selectedMode == SHAPE_RECTANGLE){
-                    drawShape(SHAPE_RECTANGLE, e.getX(), e.getY());
-                }else if(selectedMode == SHAPE_ELLIPSE){
-                    drawShape(SHAPE_ELLIPSE, e.getX(), e.getY());
-                }else if(selectedMode == MODE_SELECT){
-                    
-                }else if(selectedMode == MODE_MOVE){
-                    
+                if(null != selectedMode) 
+                switch (selectedMode) {
+                    case rectangle:
+                        drawShape(Mode.rectangle, e.getX(), e.getY());
+                        break;
+                    case ellipse:
+                        drawShape(Mode.ellipse, e.getX(), e.getY());
+                        break;
+                    case select:
+                        break;
+                    case move:
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -80,32 +100,32 @@ public class Canvas extends JPanel{
             public void keyPressed(KeyEvent evt) {
                 if (evt.getKeyChar() == 'e') {
                    text.setText("Ellipse selected");
-                   selectedMode = SHAPE_ELLIPSE;
+                   selectedMode = Mode.ellipse;
                 }
                 if (evt.getKeyChar() == 'r') {
                    text.setText("Rectangle selected");
-                   selectedMode = SHAPE_RECTANGLE;
+                   selectedMode = Mode.rectangle;
                 }
                 if (evt.getKeyChar() == 's') {
                    text.setText("Select Mode");
-                   selectedMode = MODE_SELECT;
+                   selectedMode = Mode.select;
                 }
                 if (evt.getKeyChar() == 'm') {
                    text.setText("Move Mode");
-                   selectedMode = MODE_MOVE;
+                   selectedMode = Mode.move;
                 }
               }
         });
         
     }
     
-    private void newShape(String shape, int x, int y, int w, int h){
-        if(shape.equals(SHAPE_RECTANGLE)){
+    private void newShape(Mode shape, int x, int y, int w, int h){
+        if(shape.equals(Mode.rectangle)){
             Rectangle rect = new Rectangle(latestID, x, y, w, h);
             
             latestID++;
             shapes.add(rect);
-        }else if(shape.equals(SHAPE_ELLIPSE)){
+        }else if(shape.equals(Mode.ellipse)){
             Ellipse ell = new Ellipse(latestID, x, y, w, h);
             
             latestID++;
@@ -115,7 +135,7 @@ public class Canvas extends JPanel{
         repaint(x, y, w, h);
     }
     
-    private void drawShape(String shape, int w, int h){
+    private void drawShape(Mode shape, int w, int h){
         
         Shape rect = shapes.get(latestID-1);
         int x = rect.getOriginX();
