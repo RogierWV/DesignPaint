@@ -75,6 +75,10 @@ public abstract class Shape {
         mid[1] = coordinateY + coordinateY + height;
         return mid;
     }
+    
+    public String getShapeType(){
+        return this.getClass().getSimpleName();
+    }
 
     public int getId() {
         return id;

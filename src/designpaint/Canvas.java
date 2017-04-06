@@ -40,7 +40,7 @@ public class Canvas extends JPanel{
     }
 //    String selectedMode = "none";
     Mode selectedMode = Mode.none;
-    JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode");
+    JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode");
     JLabel text = new JLabel("");
     
     List<Shape> shapes = new ArrayList();
@@ -76,15 +76,20 @@ public class Canvas extends JPanel{
                         selectShape(e.getX(), e.getY());
                         break;
                     case move:
-                        drawShape(Mode.ellipse, e.getX(), e.getY(), latestID-1);
+
                         break;
                     case resize:
+                        if(selectedShape >= 0){
+                            drawShape(e.getX(), e.getY(), selectedShape);
+                        }
                         break;
                     default:
                         break;
                 }
             }
         });
+        
+       
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
@@ -92,16 +97,21 @@ public class Canvas extends JPanel{
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        drawShape(Mode.rectangle, e.getX(), e.getY(), latestID-1);
+                        drawShape(e.getX(), e.getY(), latestID-1);
                         break;
                     case ellipse:
-                        drawShape(Mode.ellipse, e.getX(), e.getY(), latestID-1);
+                        drawShape(e.getX(), e.getY(), latestID-1);
                         break;
                     case select:
                         break;
                     case move:
                         break;
                     case resize:
+                        if(selectedShape >= 0){
+                            drawShape(e.getX(), e.getY(), selectedShape);
+                            Shape rect = shapes.get(selectedShape);
+                            drawSelect(rect);
+                        }
                         break;
                     default:
                         break;
@@ -129,6 +139,10 @@ public class Canvas extends JPanel{
                         text.setText("Move Mode");
                         selectedMode = Mode.move;
                         break;
+                    case VK_Z:
+                        text.setText("Resize Mode");
+                        selectedMode = Mode.resize;
+                        break;    
                     case VK_ESCAPE:
                         text.setText("");
                         selectedMode = Mode.none;
@@ -138,6 +152,18 @@ public class Canvas extends JPanel{
         });
         
     }
+    
+//     private Mode shapeType(String shape){
+//            String shapeType = shapes.get(selectedShape).getShapeType();
+//            switch (shapeType) {
+//             case "ellipse":
+//                 return Mode.ellipse;
+//             case "rectangle":
+//                 return Mode.ellipse;
+//             default:
+//                 return Mode.none;
+//         }
+//        }
     
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
@@ -164,7 +190,7 @@ public class Canvas extends JPanel{
         repaint();
     }
     
-    private void drawShape(Mode shape, int w, int h, int shapeId){
+    private void drawShape(int w, int h, int shapeId){
         
         Shape rect = shapes.get(shapeId);
         int x = rect.getOriginX();
@@ -184,11 +210,15 @@ public class Canvas extends JPanel{
             int farY = shapes.get(i).getCoordinateY() + shapes.get(i).getHeight();
             if(shapes.get(i).getCoordinateX() < x && shapes.get(i).getCoordinateY() < y && farX > x && farY > y){
                 clearSelect();
-                newShape(Mode.select, shapes.get(i).getCoordinateX()-1, shapes.get(i).getCoordinateY()-1, shapes.get(i).getWidth()+2, shapes.get(i).getHeight()+2);
+                drawSelect(shapes.get(i));
                 selectedShape = shapes.get(i).getId();
                 break;
             }
         }
+    }
+    
+    private void drawSelect(Shape shape){
+        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
     }
     
     private void clearSelect(){

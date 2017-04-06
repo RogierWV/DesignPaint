@@ -16,6 +16,7 @@ public class Rectangle extends Shape {
         return this;
     }
     
+    @Override
     public String getShapeType(){
         return this.getClass().getSimpleName();
     }
