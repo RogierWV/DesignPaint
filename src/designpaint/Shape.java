@@ -68,6 +68,13 @@ public abstract class Shape {
             height = Math.abs(h);
         }
     }
+    
+    public int[] getMidPoint(){
+        int[] mid = new int[2];
+        mid[0] = coordinateX + coordinateX + width;
+        mid[1] = coordinateY + coordinateY + height;
+        return mid;
+    }
 
     public int getId() {
         return id;
