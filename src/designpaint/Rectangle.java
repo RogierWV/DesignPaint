@@ -15,6 +15,10 @@ public class Rectangle extends Shape {
         graphics.drawRect(coordinateX, coordinateY, width, height);
         return this;
     }
+    
+    public String getShapeType(){
+        return this.getClass().getSimpleName();
+    }
 
     @Override
     public String toString() {

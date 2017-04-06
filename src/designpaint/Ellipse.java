@@ -16,6 +16,10 @@ public class Ellipse extends Shape {
         return this;
     }
     
+    public String getShapeType(){
+        return this.getClass().getSimpleName();
+    }
+    
     @Override
     public String toString() {
         return "ellipse " + coordinateX + " " + coordinateY + " " + width + " " + height;

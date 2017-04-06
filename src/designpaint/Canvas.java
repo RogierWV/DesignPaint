@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.stream.Stream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ public class Canvas extends JPanel{
         rectangle,
         ellipse,
         move,
+        resize,
         select
     }
 //    String selectedMode = "none";
@@ -41,6 +43,8 @@ public class Canvas extends JPanel{
     JLabel text = new JLabel("");
     
     List<Shape> shapes = new ArrayList();
+    Shape select = new Select(-1, 0, 0, 0, 0);
+    int selectedShape = -2;
     
 
     public Canvas() {
@@ -68,8 +72,12 @@ public class Canvas extends JPanel{
                         newShape(Mode.ellipse, e.getX(), e.getY(), 1, 1);
                         break;
                     case select:
+                        selectShape(e.getX(), e.getY());
                         break;
                     case move:
+                        drawShape(Mode.ellipse, e.getX(), e.getY(), latestID-1);
+                        break;
+                    case resize:
                         break;
                     default:
                         break;
@@ -83,14 +91,16 @@ public class Canvas extends JPanel{
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        drawShape(Mode.rectangle, e.getX(), e.getY());
+                        drawShape(Mode.rectangle, e.getX(), e.getY(), latestID-1);
                         break;
                     case ellipse:
-                        drawShape(Mode.ellipse, e.getX(), e.getY());
+                        drawShape(Mode.ellipse, e.getX(), e.getY(), latestID-1);
                         break;
                     case select:
                         break;
                     case move:
+                        break;
+                    case resize:
                         break;
                     default:
                         break;
@@ -122,24 +132,33 @@ public class Canvas extends JPanel{
     }
     
     private void newShape(Mode shape, int x, int y, int w, int h){
-        if(shape.equals(Mode.rectangle)){
-            Rectangle rect = new Rectangle(latestID, x, y, w, h);
-            
-            latestID++;
-            shapes.add(rect);
-        }else if(shape.equals(Mode.ellipse)){
-            Ellipse ell = new Ellipse(latestID, x, y, w, h);
-            
-            latestID++;
-            shapes.add(ell);
-        }else {System.err.println("ERROR");}
+         switch (shape) {
+             case rectangle:
+                 Rectangle rect = new Rectangle(latestID, x, y, w, h);
+                 latestID++;
+                 shapes.add(rect);
+                 break;
+             case ellipse:
+                 Ellipse ell = new Ellipse(latestID, x, y, w, h);
+                 latestID++;
+                 shapes.add(ell);
+                 break;
+             case select:
+                 Select sel = new Select(-1, x, y, w, h);
+                 //latestID++;
+                 select = sel;
+                 break;
+             default:
+                 System.err.println("ERROR");
+                 break;
+         }
         
-        repaint(x, y, w, h);
+        repaint();
     }
     
-    private void drawShape(Mode shape, int w, int h){
+    private void drawShape(Mode shape, int w, int h, int shapeId){
         
-        Shape rect = shapes.get(latestID-1);
+        Shape rect = shapes.get(shapeId);
         int x = rect.getOriginX();
         int y = rect.getOriginY();
         //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
@@ -149,8 +168,30 @@ public class Canvas extends JPanel{
         repaint();
     }
     
-    private void selectSquare(int x, int y){
-        
+    private void selectShape(int x, int y){
+        int size = shapes.size();
+
+        for (int i = 0; i < size; i++) {
+            int farX = shapes.get(i).getCoordinateX() + shapes.get(i).getWidth();
+            int farY = shapes.get(i).getCoordinateY() + shapes.get(i).getHeight();
+            if(shapes.get(i).getCoordinateX() < x && shapes.get(i).getCoordinateY() < y && farX > x && farY > y){
+                clearSelect();
+                newShape(Mode.select, shapes.get(i).getCoordinateX()-1, shapes.get(i).getCoordinateY()-1, shapes.get(i).getWidth()+2, shapes.get(i).getHeight()+2);
+                selectedShape = shapes.get(i).getId();
+                break;
+            }
+        }
+    }
+    
+    private void clearSelect(){
+        int size = shapes.size();
+
+        for (int i = 0; i < size; i++) {
+            if("Select".equals(shapes.get(i).getClass().getSimpleName())){
+                shapes.remove(i);
+                break;
+            }
+        }
     }
     
     private void moveSquare(int x, int y) {
@@ -182,6 +223,7 @@ public class Canvas extends JPanel{
 //            shape.draw(g);
 //        }
         shapes.stream().map(s -> s.draw(g)).toArray();
+        select.draw(g);
     }  
     
 }
