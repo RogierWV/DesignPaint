@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -109,22 +110,29 @@ public class Canvas extends JPanel{
         });
         
         addKeyListener(new KeyAdapter(){
+            @Override
             public void keyPressed(KeyEvent evt) {
-                if (evt.getKeyChar() == 'e') {
-                   text.setText("Ellipse selected");
-                   selectedMode = Mode.ellipse;
-                }
-                if (evt.getKeyChar() == 'r') {
-                   text.setText("Rectangle selected");
-                   selectedMode = Mode.rectangle;
-                }
-                if (evt.getKeyChar() == 's') {
-                   text.setText("Select Mode");
-                   selectedMode = Mode.select;
-                }
-                if (evt.getKeyChar() == 'm') {
-                   text.setText("Move Mode");
-                   selectedMode = Mode.move;
+                switch (evt.getKeyCode()) {
+                    case VK_E:
+                        text.setText("Ellipse selected");
+                        selectedMode = Mode.ellipse;
+                        break;
+                    case VK_R:
+                        text.setText("Rectangle selected");
+                        selectedMode = Mode.rectangle;
+                        break;
+                    case VK_S:
+                        text.setText("Select Mode");
+                        selectedMode = Mode.select;
+                        break;
+                    case VK_M:
+                        text.setText("Move Mode");
+                        selectedMode = Mode.move;
+                        break;
+                    case VK_ESCAPE:
+                        text.setText("");
+                        selectedMode = Mode.none;
+                        break;
                 }
               }
         });
@@ -205,14 +213,12 @@ public class Canvas extends JPanel{
     }
     
 
+     @Override
     public Dimension getPreferredSize() {
         return new Dimension(250,200);
     }
     
-    protected void shapeDraw(Shape s, Graphics g) {
-        s.draw(g);
-    }
-    
+     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 //        g.setColor(Color.RED);
