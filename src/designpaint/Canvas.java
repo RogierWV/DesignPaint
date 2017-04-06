@@ -10,9 +10,6 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.stream.Stream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -166,16 +163,13 @@ public class Canvas extends JPanel{
 //        }
     
     private void newShape(Mode shape, int x, int y, int w, int h){
+        Shape s = null;
          switch (shape) {
              case rectangle:
-                 Rectangle rect = new Rectangle(latestID, x, y, w, h);
-                 latestID++;
-                 shapes.add(rect);
+                 s = new Rectangle(latestID, x, y, w, h);
                  break;
              case ellipse:
-                 Ellipse ell = new Ellipse(latestID, x, y, w, h);
-                 latestID++;
-                 shapes.add(ell);
+                 s = new Ellipse(latestID, x, y, w, h);
                  break;
              case select:
                  Select sel = new Select(-1, x, y, w, h);
@@ -183,9 +177,11 @@ public class Canvas extends JPanel{
                  select = sel;
                  break;
              default:
-                 System.err.println("ERROR");
-                 break;
+                 System.err.println("ERROR: Can't use current Mode for creating new Shapes!");
+                 return;
          }
+        latestID++;
+        shapes.add(s);
         
         repaint();
     }
