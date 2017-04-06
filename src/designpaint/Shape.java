@@ -35,7 +35,9 @@ public abstract class Shape {
      * Draws the shape at it's coordinates.
      * @param graphics Graphics generator
      */
-    public void draw(Graphics graphics) {}
+    public Shape draw(Graphics graphics) {
+        return this;
+    }
     
     /**
      * Sets the dimensions of the shape.
