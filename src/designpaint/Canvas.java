@@ -147,6 +147,10 @@ public class Canvas extends JPanel{
         repaint();
     }
     
+    private void selectSquare(int x, int y){
+        
+    }
+    
     private void moveSquare(int x, int y) {
         int OFFSET = 1;
         if ((squareX!=x) || (squareY!=y)) {
