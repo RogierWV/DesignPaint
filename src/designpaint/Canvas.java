@@ -231,15 +231,28 @@ public class Canvas extends JPanel{
     
     private void selectShape(int x, int y){
         int size = shapes.size();
-
+        int area = -1;
         for (int i = 0; i < size; i++) {
             int farX = shapes.get(i).getCoordinateX() + shapes.get(i).getWidth();
             int farY = shapes.get(i).getCoordinateY() + shapes.get(i).getHeight();
             if(shapes.get(i).getCoordinateX() < x && shapes.get(i).getCoordinateY() < y && farX > x && farY > y){
-                clearSelect();
-                drawSelect(shapes.get(i));
-                selectedShape = shapes.get(i).getId();
-                break;
+                if(area == -1){
+                    area = shapes.get(i).getArea();
+                    clearSelect();
+                    drawSelect(shapes.get(i));
+                    selectedShape = shapes.get(i).getId();
+                }else{
+                    if(area > shapes.get(i).getArea()){
+                        area = shapes.get(i).getArea();
+                        clearSelect();
+                        drawSelect(shapes.get(i));
+                        selectedShape = shapes.get(i).getId();
+                    }
+                }
+//                clearSelect();
+//                drawSelect(shapes.get(i));
+//                selectedShape = shapes.get(i).getId();
+//                break;
             }
         }
     }

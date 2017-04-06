@@ -73,6 +73,10 @@ public abstract class Shape {
         }
     }
     
+    public int getArea(){
+        return height * width;
+    }
+    
     public void moveShape(int offsetX, int offsetY){
         coordinateX = coordinateX + offsetX;
         coordinateY = coordinateY + offsetY;
