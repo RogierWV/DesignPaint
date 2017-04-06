@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -162,15 +164,20 @@ public class Canvas extends JPanel{
         return new Dimension(250,200);
     }
     
+    protected void shapeDraw(Shape s, Graphics g) {
+        s.draw(g);
+    }
+    
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 //        g.setColor(Color.RED);
 //        g.fillRect(squareX,squareY,squareW,squareH);
 //        g.setColor(Color.BLACK);
 //        g.drawRect(squareX,squareY,squareW,squareH);
-        for (Shape shape: shapes) {
-            shape.draw(g);
-        }
+//        for (Shape shape: shapes) {
+//            shape.draw(g);
+//        }
+        shapes.stream().map(s -> s.draw(g)).toArray();
     }  
     
 }

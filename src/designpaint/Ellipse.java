@@ -10,9 +10,10 @@ public class Ellipse extends Shape {
     }
  
     @Override
-    public void draw(Graphics graphics) {
+    public Shape draw(Graphics graphics) {
         graphics.setColor(Color.black);
         graphics.drawOval(coordinateX, coordinateY, width, height);
+        return this;
     }
     
     @Override
