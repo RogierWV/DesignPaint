@@ -128,22 +128,21 @@ public class Canvas extends JPanel{
     }
     
     private void newShape(Mode shape, int x, int y, int w, int h){
+        Shape s = null;
          switch (shape) {
              case rectangle:
-                 Rectangle rect = new Rectangle(latestID, x, y, w, h);
-                 latestID++;
-                 shapes.add(rect);
+                 s = new Rectangle(latestID, x, y, w, h);
                  break;
              case ellipse:
-                 Ellipse ell = new Ellipse(latestID, x, y, w, h);
-                 latestID++;
-                 shapes.add(ell);
+                 s = new Ellipse(latestID, x, y, w, h);
                  break;
              default:
-                 System.err.println("ERROR");
-                 break;
+                 System.err.println("ERROR: Can't use current Mode for creating new Shapes!");
+                 return;
          }
-        
+        latestID++;
+        shapes.add(s);
+
         repaint(x, y, w, h);
     }
     
