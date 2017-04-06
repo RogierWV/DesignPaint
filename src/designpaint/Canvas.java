@@ -21,6 +21,9 @@ public class Canvas extends JPanel{
     private int squareW = 20;
     private int squareH = 20;
     
+    private int clickX = 0;
+    private int clickY = 0;
+    
     int latestID = 0;
     
 //    static final String SHAPE_RECTANGLE = "rectangle";
@@ -61,6 +64,8 @@ public class Canvas extends JPanel{
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 //moveSquare(e.getX(),e.getY());
+                clickX = e.getX();
+                clickY = e.getY();
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
@@ -73,11 +78,19 @@ public class Canvas extends JPanel{
                         selectShape(e.getX(), e.getY());
                         break;
                     case move:
-
+                        if(selectedShape >= 0){
+                            Shape rect = shapes.get(selectedShape);
+                            int offsetX = e.getX() - clickX;
+                            int offsetY = e.getY() - clickY;
+                            rect.moveShape(offsetX, offsetY);
+                            drawSelect(rect);
+                        }
                         break;
                     case resize:
                         if(selectedShape >= 0){
                             drawShape(e.getX(), e.getY(), selectedShape);
+                            Shape rect = shapes.get(selectedShape);
+                            drawSelect(rect);
                         }
                         break;
                     default:
@@ -102,6 +115,24 @@ public class Canvas extends JPanel{
                     case select:
                         break;
                     case move:
+                        if(selectedShape >= 0){
+                            Shape rect = shapes.get(selectedShape);
+                            int originX = rect.getOriginX();
+                            int originY = rect.getOriginY();
+                            int offsetX = e.getX() - clickX;
+                            int offsetY = e.getY() - clickY;
+                            int width = rect.getWidth();
+                            System.out.println("X:"+originX+" + "+offsetX+" || Width: "+width);
+                            rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
+                            System.out.println(rect.getOriginX());
+                            System.out.println(rect.getCoordinateX());
+                            //rect.moveShape(offsetX, offsetY);
+                            drawSelect(rect);
+                            repaint();
+                            
+                            clickX = e.getX();
+                            clickY = e.getY();
+                        }
                         break;
                     case resize:
                         if(selectedShape >= 0){
@@ -163,13 +194,16 @@ public class Canvas extends JPanel{
 //        }
     
     private void newShape(Mode shape, int x, int y, int w, int h){
-        Shape s = null;
          switch (shape) {
              case rectangle:
-                 s = new Rectangle(latestID, x, y, w, h);
+                 Rectangle rect = new Rectangle(latestID, x, y, w, h);
+                 latestID++;
+                 shapes.add(rect);
                  break;
              case ellipse:
-                 s = new Ellipse(latestID, x, y, w, h);
+                 Ellipse ell = new Ellipse(latestID, x, y, w, h);
+                 latestID++;
+                 shapes.add(ell);
                  break;
              case select:
                  Select sel = new Select(-1, x, y, w, h);
@@ -177,12 +211,9 @@ public class Canvas extends JPanel{
                  select = sel;
                  break;
              default:
-                 System.err.println("ERROR: Can't use current Mode for creating new Shapes!");
-                 return;
+                 System.err.println("ERROR");
+                 break;
          }
-        latestID++;
-        shapes.add(s);
-        
         repaint();
     }
     
@@ -227,16 +258,7 @@ public class Canvas extends JPanel{
             }
         }
     }
-    
-    private void moveSquare(int x, int y) {
-        int OFFSET = 1;
-        if ((squareX!=x) || (squareY!=y)) {
-            repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-            squareX=x;
-            squareY=y;
-            repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-        } 
-    }
+
     
 
      @Override
@@ -259,4 +281,3 @@ public class Canvas extends JPanel{
     }  
     
 }
-

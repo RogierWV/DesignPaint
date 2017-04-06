@@ -41,17 +41,17 @@ public abstract class Shape {
     
     /**
      * Sets the dimensions of the shape.
-     * @param coordinateX Location of the shape on the X-axis
-     * @param coordinateY Location of the shape on the Y-axis
+     * @param x Location of the shape on the X-axis
+     * @param y Location of the shape on the Y-axis
      * @param width The width of the shape.
      * @param height The height of the shape.
      */
-    public void setDimensions(int coordinateX, int coordinateY, int width, int height) {
-//        this.coordinateX = coordinateX;
-//        this.coordinateY = coordinateY;
+    public void setDimensions(int x, int y, int width, int height) {
+        this.originX = x;
+        this.originY = y;
         this.width = width;
         this.height = height;
-        prepCoordinates(originX, originY, width, height);
+        prepCoordinates(x, y, width, height);
     }
     
     private void prepCoordinates(int x, int y, int w, int h){    
@@ -60,13 +60,25 @@ public abstract class Shape {
             coordinateX = x + w;
             //W
             width = Math.abs(w);
+        }else{
+            coordinateX = x;
         }
         if(h < 0){
             //Y
             coordinateY = y + h;
             //H
             height = Math.abs(h);
+        }else{
+            coordinateY = y;
         }
+    }
+    
+    public void moveShape(int offsetX, int offsetY){
+        coordinateX = coordinateX + offsetX;
+        coordinateY = coordinateY + offsetY;
+        
+        originX = originX + offsetX;
+        originY = originY + offsetY;
     }
     
     public int[] getMidPoint(){
