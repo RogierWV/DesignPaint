@@ -15,4 +15,8 @@ public class Ellipse extends Shape {
         graphics.drawOval(coordinateX, coordinateY, width, height);
     }
     
+    @Override
+    public String toString() {
+        return "ellipse " + coordinateX + " " + coordinateY + " " + width + " " + height;
+    }
 }

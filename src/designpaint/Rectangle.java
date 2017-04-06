@@ -14,5 +14,9 @@ public class Rectangle extends Shape {
         graphics.setColor(Color.black);
         graphics.drawRect(coordinateX, coordinateY, width, height);
     }
-    
+
+    @Override
+    public String toString() {
+        return "rectangle " + coordinateX + " " + coordinateY + " " + width + " " + height;
+    }
 }

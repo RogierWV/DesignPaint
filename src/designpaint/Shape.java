@@ -65,5 +65,9 @@ public abstract class Shape {
         return height;
     }
 
-
+    @Override
+    public String toString() {
+        return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
+    }
+    
    }
