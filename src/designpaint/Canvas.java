@@ -1,6 +1,5 @@
 package designpaint;
 
-import DesignPaint.FileIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -41,7 +40,7 @@ public class Canvas extends JPanel{
     }
 //    String selectedMode = "none";
     Mode selectedMode = Mode.none;
-    JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode");
+    JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode / F to save canvas / L to load canvas");
     JLabel text = new JLabel("");
     
     List<Shape> shapes = new ArrayList();
@@ -175,6 +174,11 @@ public class Canvas extends JPanel{
                     case VK_F:
                         FileIO.save(shapes, "test.txt");
                         break;
+                    case VK_L:
+                        shapes = FileIO.load("test.txt");
+                        latestID = shapes.size();
+                        repaint(); 
+                        break;
                     case VK_ESCAPE:
                         text.setText("");
                         selectedMode = Mode.none;
@@ -220,6 +224,7 @@ public class Canvas extends JPanel{
          }
         repaint();
     }
+   
     
     private void drawShape(int w, int h, int shapeId){
         
