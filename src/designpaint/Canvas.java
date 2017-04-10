@@ -82,19 +82,12 @@ public class Canvas extends JPanel{
                         selectShape(e.getX(), e.getY());
                         break;
                     case move:
-                        if(selectedShape >= 0){
-                            Shape rect = shapes.get(selectedShape);
-                            int offsetX = e.getX() - clickX;
-                            int offsetY = e.getY() - clickY;
-                            rect.moveShape(offsetX, offsetY);
-                            drawSelect(rect);
-                        }
                         break;
                     case resize:
                         if(selectedShape >= 0){
                             drawShape(e.getX(), e.getY(), selectedShape);
                             Shape rect = shapes.get(selectedShape);
-                            drawSelect(rect);
+                            
                         }
                         break;
                     default:
@@ -107,7 +100,6 @@ public class Canvas extends JPanel{
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
-                //moveSquare(e.getX(),e.getY());
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
@@ -127,8 +119,6 @@ public class Canvas extends JPanel{
                             int offsetY = e.getY() - clickY;
                             int width = rect.getWidth();
                             rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
-                            //rect.moveShape(offsetX, offsetY);
-                            drawSelect(rect);
                             repaint();
                             
                             clickX = e.getX();
@@ -139,7 +129,6 @@ public class Canvas extends JPanel{
                         if(selectedShape >= 0){
                             drawShape(e.getX(), e.getY(), selectedShape);
                             Shape rect = shapes.get(selectedShape);
-                            drawSelect(rect);
                         }
                         break;
                     default:
@@ -190,18 +179,6 @@ public class Canvas extends JPanel{
         
     }
     
-//     private Mode shapeType(String shape){
-//            String shapeType = shapes.get(selectedShape).getShapeType();
-//            switch (shapeType) {
-//             case "ellipse":
-//                 return Mode.ellipse;
-//             case "rectangle":
-//                 return Mode.ellipse;
-//             default:
-//                 return Mode.none;
-//         }
-//        }
-    
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
              case rectangle:
@@ -228,7 +205,6 @@ public class Canvas extends JPanel{
    
     
     private void drawShape(int w, int h, int shapeId){
-        
         Shape rect = shapes.get(shapeId);
         int x = rect.getOriginX();
         int y = rect.getOriginY();
@@ -249,22 +225,17 @@ public class Canvas extends JPanel{
                 if(area == -1){
                     area = shapes.get(i).getArea();
                     clearSelect();
-                    drawSelect(shapes.get(i));
                     selectedShape = shapes.get(i).getId();
                 }else{
                     if(area > shapes.get(i).getArea()){
                         area = shapes.get(i).getArea();
                         clearSelect();
-                        drawSelect(shapes.get(i));
                         selectedShape = shapes.get(i).getId();
                     }
                 }
-//                clearSelect();
-//                drawSelect(shapes.get(i));
-//                selectedShape = shapes.get(i).getId();
-//                break;
             }
         }
+        repaint();
     }
     
     private void drawSelect(Shape shape){
@@ -281,9 +252,7 @@ public class Canvas extends JPanel{
             }
         }
     }
-
     
-
      @Override
     public Dimension getPreferredSize() {
         return new Dimension(250,200);
@@ -292,15 +261,15 @@ public class Canvas extends JPanel{
      @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-//        g.setColor(Color.RED);
-//        g.fillRect(squareX,squareY,squareW,squareH);
-//        g.setColor(Color.BLACK);
-//        g.drawRect(squareX,squareY,squareW,squareH);
-//        for (Shape shape: shapes) {
-//            shape.draw(g);
-//        }
         shapes.stream().map(s -> s.draw(g)).toArray();
-        select.draw(g);
+        for(Shape shape : shapes){
+            if(shape.getId() == selectedShape){
+                newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+                select.draw(g); 
+            }
+        }
+         
+        
     }  
     
 }
