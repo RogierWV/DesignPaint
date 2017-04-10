@@ -67,35 +67,14 @@ public class Canvas extends JPanel{
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                //moveSquare(e.getX(),e.getY());
                 clickX = e.getX();
                 clickY = e.getY();
-                if(null != selectedMode) 
+                if(selectedMode != null) 
                 switch (selectedMode) {
-                    case rectangle:
-                        newShape(Mode.rectangle, e.getX(), e.getY(), 1, 1);
-                        break;
-                    case ellipse:
-                        newShape(Mode.ellipse, e.getX(), e.getY(), 1, 1);
-                        break;
-                    case select:
-                        selectShape(e.getX(), e.getY());
-                        break;
-                    case move:
-                        if(selectedShape >= 0){
-                            Shape rect = shapes.get(selectedShape);
-                            int offsetX = e.getX() - clickX;
-                            int offsetY = e.getY() - clickY;
-                            rect.moveShape(offsetX, offsetY);
-                            drawSelect(rect);
-                        }
-                        break;
-                    case resize:
-                        if(selectedShape >= 0){
-                            drawShape(e.getX(), e.getY(), selectedShape);
-                            Shape rect = shapes.get(selectedShape);
-                            drawSelect(rect);
-                        }
+                    case select:    
+                        Command cmd = new Command_Select(shapes);
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     default:
                         break;
@@ -111,32 +90,41 @@ public class Canvas extends JPanel{
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        drawShape(e.getX(), e.getY(), latestID-1);
+                        //drawShape(e.getX(), e.getY(), latestID-1);
+                        Command cmd = new Command_AddRectangle(shapes);
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case ellipse:
-                        drawShape(e.getX(), e.getY(), latestID-1);
+                        //drawShape(e.getX(), e.getY(), latestID-1);
+                        Command cmd = new Command_AddEllipse(shapes);
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case select:
                         break;
                     case move:
-                        if(selectedShape >= 0){
-                            Shape rect = shapes.get(selectedShape);
-                            int originX = rect.getOriginX();
-                            int originY = rect.getOriginY();
-                            int offsetX = e.getX() - clickX;
-                            int offsetY = e.getY() - clickY;
-                            int width = rect.getWidth();
-                            System.out.println("X:"+originX+" + "+offsetX+" || Width: "+width);
-                            rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
-                            System.out.println(rect.getOriginX());
-                            System.out.println(rect.getCoordinateX());
-                            //rect.moveShape(offsetX, offsetY);
-                            drawSelect(rect);
-                            repaint();
-                            
-                            clickX = e.getX();
-                            clickY = e.getY();
-                        }
+//                        if(selectedShape >= 0){
+//                            Shape rect = shapes.get(selectedShape);
+//                            int originX = rect.getOriginX();
+//                            int originY = rect.getOriginY();
+//                            int offsetX = e.getX() - clickX;
+//                            int offsetY = e.getY() - clickY;
+//                            int width = rect.getWidth();
+//                            System.out.println("X:"+originX+" + "+offsetX+" || Width: "+width);
+//                            rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
+//                            System.out.println(rect.getOriginX());
+//                            System.out.println(rect.getCoordinateX());
+//                            //rect.moveShape(offsetX, offsetY);
+//                            drawSelect(rect);
+//                            repaint();
+//                            
+//                            clickX = e.getX();
+//                            clickY = e.getY();
+//                        }
+                        Command cmd = new Command_Move(shapes);
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case resize:
                         if(selectedShape >= 0){
@@ -144,6 +132,9 @@ public class Canvas extends JPanel{
                             Shape rect = shapes.get(selectedShape);
                             drawSelect(rect);
                         }
+                        Command cmd = new Command_Resize(shapes, selectedShape, e.getX(), e.getY());
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     default:
                         break;
@@ -186,6 +177,12 @@ public class Canvas extends JPanel{
                     case VK_ESCAPE:
                         text.setText("");
                         selectedMode = Mode.none;
+                        break;
+                    case VK_U:
+                        undo();
+                        break;
+                    case VK_I:
+                        redo();
                         break;
                 }
               }
@@ -304,6 +301,18 @@ public class Canvas extends JPanel{
 //        }
         shapes.stream().map(s -> s.draw(g)).toArray();
         select.draw(g);
-    }  
+    }
+    
+    private void undo() {
+        Command cmd = history.pop();
+        cmd.undo();
+        future.push(cmd);
+    }
+    
+    private void redo() {
+        Command cmd = future.pop();
+        cmd.execute();
+        history.push(cmd);
+    }
     
 }
