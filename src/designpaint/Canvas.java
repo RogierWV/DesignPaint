@@ -126,10 +126,7 @@ public class Canvas extends JPanel{
                             int offsetX = e.getX() - clickX;
                             int offsetY = e.getY() - clickY;
                             int width = rect.getWidth();
-                            System.out.println("X:"+originX+" + "+offsetX+" || Width: "+width);
                             rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
-                            System.out.println(rect.getOriginX());
-                            System.out.println(rect.getCoordinateX());
                             //rect.moveShape(offsetX, offsetY);
                             drawSelect(rect);
                             repaint();

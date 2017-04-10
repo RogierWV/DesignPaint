@@ -1,6 +1,12 @@
 package designpaint;
 
-public class Command_Select implements Command{
+import java.util.List;
+
+public class Command_Select extends Command{
+
+    public Command_Select(List<Shape> shapes) {
+        super(shapes);
+    }
 
     @Override
     public void execute() {
