@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 public class DesignPaint {
     
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "true");
+        //System.setProperty("sun.java2d.opengl", "true");
         
         JFrame frame = new JFrame("Design Patterns Paint");
 
