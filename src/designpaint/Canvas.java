@@ -1,5 +1,6 @@
 package designpaint;
 
+import DesignPaint.FileIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -171,6 +172,9 @@ public class Canvas extends JPanel{
                         text.setText("Resize Mode");
                         selectedMode = Mode.resize;
                         break;    
+                    case VK_F:
+                        FileIO.save(shapes, "test.txt");
+                        break;
                     case VK_ESCAPE:
                         text.setText("");
                         selectedMode = Mode.none;
