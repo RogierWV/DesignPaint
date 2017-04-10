@@ -10,6 +10,7 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Stack;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,6 +47,9 @@ public class Canvas extends JPanel{
     List<Shape> shapes = new ArrayList();
     Shape select = new Select(-1, 0, 0, 0, 0);
     int selectedShape = -2;
+    
+    Stack<Command> history;
+    Stack<Command> future;
     
 
     public Canvas() {
