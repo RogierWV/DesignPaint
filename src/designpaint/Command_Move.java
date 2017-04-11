@@ -44,14 +44,12 @@ public class Command_Move extends Command{
 
     @Override
     public void undo() {
-        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
-            Shape shape = it.next();
+        for (Shape shape : shapes) {
             if (shape.getId() == id) {
                 shape.setDimensions(oldX, oldY, shape.getWidth(), shape.getHeight());
                 
             }
-        }
-//        for(Shape shape : shapes){
+        }//        for(Shape shape : shapes){
 //            int index = shapes.indexOf(shape);
 //            if(shape.getId() == id){
 //                shape.setDimensions(oldX, oldY, shape.getWidth(), shape.getHeight());

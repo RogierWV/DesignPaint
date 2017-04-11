@@ -2,7 +2,7 @@ package designpaint;
 
 import java.awt.Graphics;
 
-public abstract class Shape {
+public class Shape {
     protected final int id;
     protected int coordinateX;
     protected int coordinateY;
@@ -29,6 +29,13 @@ public abstract class Shape {
         this.width = width;
         this.height = height;
         prepCoordinates(originX, originY, width, height);
+    }
+    
+    //Copy constructor
+    public Shape(Shape shape) {
+        this(shape.getId(), shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
+        //no defensive copies are created here, since 
+        //there are no mutable object fields (String is immutable)
     }
     
     @Override

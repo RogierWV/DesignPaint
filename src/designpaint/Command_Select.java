@@ -45,7 +45,12 @@ public class Command_Select extends Command{
 
     @Override
     public void undo() {
-        clearSelect();
+        if(previousSelectedShape != null){
+            selectedShape.set(previousSelectedShape);
+        }else{
+            clearSelect();
+        }
+        
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

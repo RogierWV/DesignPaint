@@ -66,22 +66,26 @@ public class Canvas extends JPanel{
                 clickX = e.getX();
                 clickY = e.getY();
                 Command cmd;
+                
                 System.out.println("History size: " + history.size());
                 if(selectedMode != null)
                 switch (selectedMode) {
                     case rectangle:
+                        future.clear();
                         cmd = new Command_AddRectangle(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
                         break;
                     case ellipse:
+                        future.clear();
                         cmd = new Command_AddEllipse(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
                         break;
                     case move:
+                        future.clear();
                         cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
                         clickX = e.getX();
                         clickY = e.getY();
@@ -89,6 +93,7 @@ public class Canvas extends JPanel{
                         history.push(cmd);
                         break;
                     case resize:
+                        future.clear();
                         if(selectedShape != null){
                             cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
                             latestID++;
@@ -97,6 +102,7 @@ public class Canvas extends JPanel{
                             //drawSelect(rect);
                         }
                     case select:    
+                        future.clear();
                         cmd = new Command_Select(shapes, selectedShape, e.getX(), e.getY());
                         cmd.execute();
                         history.push(cmd);
@@ -198,11 +204,9 @@ public class Canvas extends JPanel{
                         break;
                     case VK_U:
                         undo();
-                        repaint();
                         break;
                     case VK_I:
                         redo();
-                        repaint();
                         break;
                 }
               }
