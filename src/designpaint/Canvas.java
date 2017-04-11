@@ -1,7 +1,6 @@
 package designpaint;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.List;
 import java.awt.event.KeyAdapter;
@@ -17,14 +16,29 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * Main component of the application.
+ * Contains key/mouse listeners & base drawing logic.
+ * User can draw shapes on this canvas.
+ */
 public class Canvas extends JPanel{
     
-    private int clickX = 0;
-    private int clickY = 0;
+    private int clickX;
+    private int clickY;
     
-    int latestID = 0;
+    private int latestID;
     
-    static enum Mode {
+    /**
+     * Modes for mouse interaction.
+     * options:
+     *      none: Interaction does nothing.
+     *      rectangle: Creates a rectangle on mouse click/drag.
+     *      ellipse: Creates a ellipse on mouse click/drag.
+     *      move: Moves the selected object on mouse drag.
+     *      resize: Resizes the selected object on mouse drag.
+     *      select: Selects an object on mouse click.
+     */
+    private static enum Mode {
         none,
         rectangle,
         ellipse,
@@ -32,35 +46,50 @@ public class Canvas extends JPanel{
         resize,
         select
     }
-    Mode selectedMode = Mode.none;
-    JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode / F to save canvas / L to load canvas");
-    JLabel text = new JLabel("");
+    private Mode selectedMode = Mode.none;
+    private JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode / F to save canvas / L to load canvas");
+    private JLabel text = new JLabel("");
     
-    List<Shape> shapes = new ArrayList();
-    Shape select = new Select(-1, 0, 0, 0, 0);
-    //int selectedShape = -2;
-    AtomicReference<Shape> selectedShape;
+    private List<Shape> shapes = new ArrayList();
+    private Shape select = new Select(-1, 0, 0, 0, 0);
+    private AtomicReference<Shape> selectedShape;
     
-    Stack<Command> history;
-    Stack<Command> future;
+    private Stack<Command> history;
+    private Stack<Command> future;
     
-
+    /**
+     * Creates an canvas.
+     */
     public Canvas() {
+        this.latestID = 0;
+        this.clickY = 0;
+        this.clickX = 0;
+        
         this.history = new Stack<>();
         this.future = new Stack<>();
         this.selectedShape = new AtomicReference<>();
+        
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.add(keys);
         this.add(text);
-        keys.setLocation(10,10);
-        text.setLocation(10,25);
+        this.keys.setLocation(10,10);
+        this.text.setLocation(10,25);
         this.setLayout(null);
-        keys.setSize(900, 14);
-        text.setSize(900, 14);
-
+        this.keys.setSize(900, 14);
+        this.text.setSize(900, 14);
         setBorder(BorderFactory.createLineBorder(Color.black));
 
+        mouse_press();
+        mouse_drag();
+        key_press();
+    }
+    
+    // <editor-fold defaultstate="collapsed" desc="Listeners">    
+    /**
+     * Listener that handles mouse presses. 
+     */
+    private void mouse_press() {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 clickX = e.getX();
@@ -107,9 +136,12 @@ public class Canvas extends JPanel{
                 repaint();
             }
         });
-        
-       
-
+    }
+    
+    /**
+     * Listener that handles mouse drags.
+     */
+    private void mouse_drag() {
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -159,7 +191,12 @@ public class Canvas extends JPanel{
                 repaint();
             }
         });
-        
+    }
+    
+    /**
+     * Listener that handles key presses.
+     */
+    private void key_press() {
         addKeyListener(new KeyAdapter(){
             @Override
             public void keyPressed(KeyEvent evt) {
@@ -207,22 +244,29 @@ public class Canvas extends JPanel{
                 }
               }
         });
-        
     }
+    // </editor-fold>
     
+    /**
+     * removes duplicate shapes with same id.
+     * @param shapeID ID to be checked for duplicates.
+     */
     private void removeDuplicateShapes(int shapeID){
         for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
             Shape shape = it.next();
-            if (shape.getId() == shapeID) {
+            if (shape.getId() == shapeID)
                 it.remove();
-            }
         }
-//        for(Shape shape : shapes){
-//            if(shape.getId() == shapeID){
-//                shapes.remove(shape);
-//            }
-//        }
     }    
+    
+    /**
+     * Back door for selection function to create a box around the selected object.
+     * @param shape Selected shape
+     * @param x x coordinate of selected shape
+     * @param y y coordinate of selected shape
+     * @param w width of the selected shape
+     * @param h height of the selected shape
+     */
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
              case rectangle:
@@ -237,95 +281,44 @@ public class Canvas extends JPanel{
                  break;
              case select:
                  Select sel = new Select(-1, x, y, w, h);
-                 //latestID++;
                  select = sel;
                  break;
              default:
                  System.err.println("ERROR");
                  break;
-         }
-        repaint();
-    }
-   
-    
-    private void drawShape(int w, int h, int shapeId){
-        Shape rect = shapes.get(shapeId);
-        int x = rect.getOriginX();
-        int y = rect.getOriginY();
-        //bereken height/width aan de hand van cursor locatie ten opzichte van origin (x,y)
-        int height = h - y;
-        int width = w - x;
-        rect.setDimensions(x, y, width, height);
-        repaint();
+         } repaint();
     }
     
-    private void selectShape(int x, int y){
-        int size = shapes.size();
-        int area = -1;
-        for (int i = 0; i < size; i++) {
-            int farX = shapes.get(i).getCoordinateX() + shapes.get(i).getWidth();
-            int farY = shapes.get(i).getCoordinateY() + shapes.get(i).getHeight();
-            if(shapes.get(i).getCoordinateX() < x && shapes.get(i).getCoordinateY() < y && farX > x && farY > y){
-                if(area == -1){
-                    area = shapes.get(i).getArea();
-                    clearSelect();
-                    selectedShape.set(shapes.get(i));
-                }else{
-                    if(area > shapes.get(i).getArea()){
-                        area = shapes.get(i).getArea();
-                        clearSelect();
-                        selectedShape.set(shapes.get(i));
-                    }
-                }
-            }
-        }
-        repaint();
-    }
-    
-//    private void drawSelect(Shape shape){
-//        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
-//    }
-    
-    private void clearSelect(){
-        int size = shapes.size();
-
-        for (int i = 0; i < size; i++) {
-            if("Select".equals(shapes.get(i).getClass().getSimpleName())){
-                shapes.remove(i);
-                break;
-            }
-        }
-    }
-    
-     @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(250,200);
-    }
-    
-     @Override
+    /**
+     * Handles the repaint operation.
+     * @param g graphics component.
+     */
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         shapes.stream().map(s -> s.draw(g)).toArray();
         for(Shape shape : shapes){
-            if(selectedShape != null){
+            if(selectedShape != null)
                 if(shape == selectedShape.get()){
                     newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
                     select.draw(g); 
                 }
-            }
         }
-         
-        
     }  
     
+    /**
+     * Basic undo function.
+     */
     private void undo() {
-        System.out.println(history.peek());
         Command cmd = history.pop();
         cmd.undo();
         future.push(cmd);
         repaint();
     }
     
+    /**
+     * Basic redo function.
+     */
     private void redo() {
         Command cmd = future.pop();
         cmd.execute();
