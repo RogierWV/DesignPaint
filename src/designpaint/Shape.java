@@ -37,7 +37,7 @@ public class Shape {
     
     /**
      * Copy constructor for Shape.
-     * @param shape 
+     * @param shape Shape to be copied
      */
     public Shape(Shape shape) {
         this(shape.getId(), shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
