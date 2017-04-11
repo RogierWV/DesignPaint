@@ -10,7 +10,9 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,13 +38,17 @@ public class Canvas extends JPanel{
     
     List<Shape> shapes = new ArrayList();
     Shape select = new Select(-1, 0, 0, 0, 0);
-    int selectedShape = -2;
+    //int selectedShape = -2;
+    AtomicReference<Shape> selectedShape;
     
     Stack<Command> history;
     Stack<Command> future;
     
 
     public Canvas() {
+        this.history = new Stack<>();
+        this.future = new Stack<>();
+        this.selectedShape = new AtomicReference<>();
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.add(keys);
@@ -60,22 +66,30 @@ public class Canvas extends JPanel{
                 clickX = e.getX();
                 clickY = e.getY();
                 Command cmd;
+                System.out.println("History size: " + history.size());
                 if(selectedMode != null)
                 switch (selectedMode) {
                     case rectangle:
-                        cmd = new Command_AddRectangle(shapes, latestID, e.getX(), e.getY(), 1, 1);
+                        cmd = new Command_AddRectangle(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
                         break;
                     case ellipse:
-                        cmd = new Command_AddEllipse(shapes, latestID, e.getX(), e.getY(), 1, 1);
+                        cmd = new Command_AddEllipse(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
                         break;
+                    case move:
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        clickX = e.getX();
+                        clickY = e.getY();
+                        cmd.execute();
+                        history.push(cmd);
+                        break;
                     case resize:
-                        if(selectedShape >= 0){
+                        if(selectedShape != null){
                             cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
                             latestID++;
                             cmd.execute();
@@ -83,64 +97,66 @@ public class Canvas extends JPanel{
                             //drawSelect(rect);
                         }
                     case select:    
-                        cmd = new Command_Select(shapes);
+                        cmd = new Command_Select(shapes, selectedShape, e.getX(), e.getY());
                         cmd.execute();
                         history.push(cmd);
                         break;
                     default:
                         break;
                 }
+                repaint();
             }
         });
         
        
 
         addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent e) {
                 Command cmd;
+                
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        if(selectedShape >= 0){
-                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
-                            latestID++;
-                            cmd.execute();
-                            history.pop();
-                            history.push(cmd);
-                            //drawSelect(rect);
-                        }
+                        removeDuplicateShapes(latestID - 1);
+                        cmd = new Command_AddRectangle(shapes, latestID -1,clickX, clickY, e.getX(), e.getY());
+                        cmd.execute();
+                        history.pop();
+                        history.push(cmd);
+                        //drawSelect(rect);
+                        repaint();
                         break;
                     case ellipse:
-                        if(selectedShape >= 0){
-                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
-                            latestID++;
-                            cmd.execute();
-                            history.pop();
-                            history.push(cmd);
-                            //drawSelect(rect);
-                        }
+                        removeDuplicateShapes(latestID - 1);
+                        cmd = new Command_AddEllipse(shapes, latestID-1, clickX, clickY, e.getX(), e.getY());
+                        cmd.execute();
+                        history.pop();
+                        history.push(cmd);
+                        repaint();
                         break;
                     case select:
                         break;
                     case move:
-                        cmd = new Command_Move(shapes, selectedShape, e.getX(), e.getY());
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        clickX = e.getX();
+                        clickY = e.getY();
                         cmd.execute();
                         history.pop();
                         history.push(cmd);
                         break;
                     case resize:
-                        if(selectedShape >= 0){
-                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
-                            latestID++;
+                        if(selectedShape != null){
+                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY());
                             cmd.execute();
                             history.pop();
                             history.push(cmd);
                             //drawSelect(rect);
                         }
                         break;
-                    default:
+                    default:                        
                         break;
                 }
+                repaint();
             }
         });
         
@@ -182,9 +198,11 @@ public class Canvas extends JPanel{
                         break;
                     case VK_U:
                         undo();
+                        repaint();
                         break;
                     case VK_I:
                         redo();
+                        repaint();
                         break;
                 }
               }
@@ -192,18 +210,19 @@ public class Canvas extends JPanel{
         
     }
     
-//     private Mode shapeType(String shape){
-//            String shapeType = shapes.get(selectedShape).getShapeType();
-//            switch (shapeType) {
-//             case "ellipse":
-//                 return Mode.ellipse;
-//             case "rectangle":
-//                 return Mode.ellipse;
-//             default:
-//                 return Mode.none;
-//         }
+    private void removeDuplicateShapes(int shapeID){
+        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+            Shape shape = it.next();
+            if (shape.getId() == shapeID) {
+                it.remove();
+            }
+        }
+//        for(Shape shape : shapes){
+//            if(shape.getId() == shapeID){
+//                shapes.remove(shape);
+//            }
 //        }
-    
+    }    
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
              case rectangle:
@@ -230,7 +249,6 @@ public class Canvas extends JPanel{
    
     
     private void drawShape(int w, int h, int shapeId){
-        
         Shape rect = shapes.get(shapeId);
         int x = rect.getOriginX();
         int y = rect.getOriginY();
@@ -251,27 +269,22 @@ public class Canvas extends JPanel{
                 if(area == -1){
                     area = shapes.get(i).getArea();
                     clearSelect();
-                    drawSelect(shapes.get(i));
-                    selectedShape = shapes.get(i).getId();
+                    selectedShape.set(shapes.get(i));
                 }else{
                     if(area > shapes.get(i).getArea()){
                         area = shapes.get(i).getArea();
                         clearSelect();
-                        drawSelect(shapes.get(i));
-                        selectedShape = shapes.get(i).getId();
+                        selectedShape.set(shapes.get(i));
                     }
                 }
-//                clearSelect();
-//                drawSelect(shapes.get(i));
-//                selectedShape = shapes.get(i).getId();
-//                break;
             }
         }
+        repaint();
     }
     
-    private void drawSelect(Shape shape){
-        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
-    }
+//    private void drawSelect(Shape shape){
+//        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+//    }
     
     private void clearSelect(){
         int size = shapes.size();
@@ -283,9 +296,7 @@ public class Canvas extends JPanel{
             }
         }
     }
-
     
-
      @Override
     public Dimension getPreferredSize() {
         return new Dimension(250,200);
@@ -294,27 +305,32 @@ public class Canvas extends JPanel{
      @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-//        g.setColor(Color.RED);
-//        g.fillRect(squareX,squareY,squareW,squareH);
-//        g.setColor(Color.BLACK);
-//        g.drawRect(squareX,squareY,squareW,squareH);
-//        for (Shape shape: shapes) {
-//            shape.draw(g);
-//        }
         shapes.stream().map(s -> s.draw(g)).toArray();
-        select.draw(g);
-    }
+        for(Shape shape : shapes){
+            if(selectedShape != null){
+                if(shape == selectedShape.get()){
+                    newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+                    select.draw(g); 
+                }
+            }
+        }
+         
+        
+    }  
     
     private void undo() {
+        System.out.println(history.peek());
         Command cmd = history.pop();
         cmd.undo();
         future.push(cmd);
+        repaint();
     }
     
     private void redo() {
         Command cmd = future.pop();
         cmd.execute();
         history.push(cmd);
+        repaint();
     }
     
 }

@@ -1,5 +1,6 @@
 package designpaint;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class Command_Move extends Command{
@@ -9,35 +10,53 @@ public class Command_Move extends Command{
     
     int oldX;
     int oldY;
+    
+    int clickX;
+    int clickY;
 
-    public Command_Move(List<Shape> shapes, int id, int x, int y) {
+    public Command_Move(List<Shape> shapes, int id, int x, int y, int clickX, int clickY) {
         super(shapes);
         this.id = id;
         this.x = x;
         this.y = y;
+        this.clickX = clickX;
+        this.clickY = clickY;
     }
 
     @Override
     public void execute() {
         for(Shape shape : shapes){
             if(shape.getId() == id){
+                
+                int originX = shape.getOriginX();
+                int originY = shape.getOriginY();
+                int offsetX = x - clickX;
+                int offsetY = y - clickY;
+                shape.setDimensions(originX + offsetX, originY + offsetY, shape.getWidth(), shape.getHeight());
+                
+                
                 oldX = shape.getCoordinateX();
                 oldY = shape.getCoordinateY();
-                shape.setDimensions(x, y, shape.getWidth(), shape.getHeight());
+                //shape.setDimensions(x, y, shape.getWidth(), shape.getHeight());
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void undo() {
-        for(Shape shape : shapes){
-            int index = shapes.indexOf(shape);
-            if(shape.getId() == id){
+        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+            Shape shape = it.next();
+            if (shape.getId() == id) {
                 shape.setDimensions(oldX, oldY, shape.getWidth(), shape.getHeight());
+                
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+//        for(Shape shape : shapes){
+//            int index = shapes.indexOf(shape);
+//            if(shape.getId() == id){
+//                shape.setDimensions(oldX, oldY, shape.getWidth(), shape.getHeight());
+//            }
+//        }
+  }
+       
 }

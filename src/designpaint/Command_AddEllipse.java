@@ -1,5 +1,6 @@
 package designpaint;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class Command_AddEllipse extends Command{
@@ -20,18 +21,30 @@ public class Command_AddEllipse extends Command{
 
     @Override
     public void execute() {
-        shapes.add(new Ellipse(id, x, y, w, h));
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int width = w - x;
+        int height = h - y;
+        shapes.add(new Ellipse(id, x, y, width, height));
+        System.out.println(shapes);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void undo() {
-        for(Shape shape : shapes){
-            if(shape.getId() == id){
-                shapes.remove(shape);
+        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+            Shape shape = it.next();
+            if (shape.getId() == id) {
+                it.remove();
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        for(Shape shape : shapes){
+//            if(shape.getId() == id){
+//                shapes.remove(shape);
+//                System.out.println("undo");
+//                System.out.println(shapes.get(id));
+//                shapes.listIterator(id).remove();
+//            }
+//        }
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

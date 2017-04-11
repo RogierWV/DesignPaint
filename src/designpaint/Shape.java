@@ -31,6 +31,15 @@ public abstract class Shape {
         prepCoordinates(originX, originY, width, height);
     }
     
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Shape) {
+            Shape oShape = (Shape)o;
+            return (this.id == oShape.id);
+        }
+        return false;
+    }
+    
     /**
      * Draws the shape at it's coordinates.
      * @param graphics Graphics generator
