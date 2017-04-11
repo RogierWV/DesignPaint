@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 /**
  * Main component of the application.
- * Contains key/mouse listeners & base drawing logic.
+ * Contains key/mouse listeners and base drawing logic.
  * User can draw shapes on this canvas.
  */
 public class Canvas extends JPanel{
