@@ -6,7 +6,7 @@ import java.awt.Graphics;
  * Base class for all shapes that can be drawn.
  * @see Canvas
  */
-public abstract class Shape {
+public class Shape {
     protected final int id;
     protected int coordinateX;
     protected int coordinateY;
@@ -33,6 +33,16 @@ public abstract class Shape {
         this.width = width;
         this.height = height;
         prepCoordinates(originX, originY, width, height);
+    }
+    
+    /**
+     * Copy constructor for Shape.
+     * @param shape 
+     */
+    public Shape(Shape shape) {
+        this(shape.getId(), shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
+        //no defensive copies are created here, since 
+        //there are no mutable object fields (String is immutable)
     }
     
     /**
