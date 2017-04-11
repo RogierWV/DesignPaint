@@ -89,11 +89,11 @@ public class Canvas extends JPanel{
                         break;
                     case move:
                         future.clear();
+                        anchorX = selectedShape.get().getCoordinateX();
+                        anchorY = selectedShape.get().getCoordinateY();
                         cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
                         clickX = e.getX();
                         clickY = e.getY();
-                        anchorX = select.coordinateX;
-                        anchorY = select.coordinateY;
                         cmd.execute();
                         history.push(cmd);
                         break;
