@@ -6,7 +6,7 @@ import java.awt.Graphics;
  * Base class for all shapes that can be drawn.
  * @see Canvas
  */
-public class Shape {
+public class Shape implements Component{
     protected final int id;
     protected int coordinateX;
     protected int coordinateY;
