@@ -15,6 +15,7 @@ public class Command_Resize extends Command{
         this.id = id;
         this.w = w;
         this.h = h;
+        //System.out.println("Resize Constructor: "+ id);
     }
 
     @Override
@@ -30,6 +31,7 @@ public class Command_Resize extends Command{
                 int height = h - y;
                 
                 shape.setDimensions(x, y, width, height);
+                //System.out.println("Resize: " + id + " "+ w + " " + h);
             }
         }
     }
@@ -44,7 +46,6 @@ public class Command_Resize extends Command{
                 shape.setDimensions(x, y, oldW, oldH);
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

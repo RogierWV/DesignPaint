@@ -10,27 +10,20 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Canvas extends JPanel{
     
-     private int squareX = 50;
-    private int squareY = 50;
-    private int squareW = 20;
-    private int squareH = 20;
-    
     private int clickX = 0;
     private int clickY = 0;
     
     int latestID = 0;
     
-//    static final String SHAPE_RECTANGLE = "rectangle";
-//    static final String SHAPE_ELLIPSE = "ellipse";
-//    static final String MODE_MOVE = "move";
-//    static final String MODE_SELECT = "select";
     static enum Mode {
         none,
         rectangle,
@@ -39,20 +32,23 @@ public class Canvas extends JPanel{
         resize,
         select
     }
-//    String selectedMode = "none";
     Mode selectedMode = Mode.none;
     JLabel keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode / M for Move Mode / Z for Resize Mode / F to save canvas / L to load canvas");
     JLabel text = new JLabel("");
     
     List<Shape> shapes = new ArrayList();
     Shape select = new Select(-1, 0, 0, 0, 0);
-    int selectedShape = -2;
+    //int selectedShape = -2;
+    AtomicReference<Shape> selectedShape;
     
     Stack<Command> history;
     Stack<Command> future;
     
 
     public Canvas() {
+        this.history = new Stack<>();
+        this.future = new Stack<>();
+        this.selectedShape = new AtomicReference<>();
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.add(keys);
@@ -67,73 +63,100 @@ public class Canvas extends JPanel{
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                //moveSquare(e.getX(),e.getY());
                 clickX = e.getX();
                 clickY = e.getY();
-                if(null != selectedMode) 
+                Command cmd;
+                System.out.println("History size: " + history.size());
+                if(selectedMode != null)
                 switch (selectedMode) {
                     case rectangle:
-                        newShape(Mode.rectangle, e.getX(), e.getY(), 1, 1);
+                        cmd = new Command_AddRectangle(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
+                        latestID++;
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case ellipse:
-                        newShape(Mode.ellipse, e.getX(), e.getY(), 1, 1);
-                        break;
-                    case select:
-                        selectShape(e.getX(), e.getY());
+                        cmd = new Command_AddEllipse(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
+                        latestID++;
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case move:
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        clickX = e.getX();
+                        clickY = e.getY();
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     case resize:
-                        if(selectedShape >= 0){
-                            drawShape(e.getX(), e.getY(), selectedShape);
-                            Shape rect = shapes.get(selectedShape);
-                            
+                        if(selectedShape != null){
+                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
+                            latestID++;
+                            cmd.execute();
+                            history.push(cmd);
+                            //drawSelect(rect);
                         }
+                    case select:    
+                        cmd = new Command_Select(shapes, selectedShape, e.getX(), e.getY());
+                        cmd.execute();
+                        history.push(cmd);
                         break;
                     default:
                         break;
                 }
+                repaint();
             }
         });
         
        
 
         addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent e) {
+                Command cmd;
+                
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        drawShape(e.getX(), e.getY(), latestID-1);
+                        removeDuplicateShapes(latestID - 1);
+                        cmd = new Command_AddRectangle(shapes, latestID -1,clickX, clickY, e.getX(), e.getY());
+                        cmd.execute();
+                        history.pop();
+                        history.push(cmd);
+                        //drawSelect(rect);
+                        repaint();
                         break;
                     case ellipse:
-                        drawShape(e.getX(), e.getY(), latestID-1);
+                        removeDuplicateShapes(latestID - 1);
+                        cmd = new Command_AddEllipse(shapes, latestID-1, clickX, clickY, e.getX(), e.getY());
+                        cmd.execute();
+                        history.pop();
+                        history.push(cmd);
+                        repaint();
                         break;
                     case select:
                         break;
                     case move:
-                        if(selectedShape >= 0){
-                            Shape rect = shapes.get(selectedShape);
-                            int originX = rect.getOriginX();
-                            int originY = rect.getOriginY();
-                            int offsetX = e.getX() - clickX;
-                            int offsetY = e.getY() - clickY;
-                            int width = rect.getWidth();
-                            rect.setDimensions(originX + offsetX, originY + offsetY, rect.getWidth(), rect.getHeight());
-                            repaint();
-                            
-                            clickX = e.getX();
-                            clickY = e.getY();
-                        }
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        clickX = e.getX();
+                        clickY = e.getY();
+                        cmd.execute();
+                        history.pop();
+                        history.push(cmd);
                         break;
                     case resize:
-                        if(selectedShape >= 0){
-                            drawShape(e.getX(), e.getY(), selectedShape);
-                            Shape rect = shapes.get(selectedShape);
+                        if(selectedShape != null){
+                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY());
+                            cmd.execute();
+                            history.pop();
+                            history.push(cmd);
+                            //drawSelect(rect);
                         }
                         break;
-                    default:
+                    default:                        
                         break;
                 }
+                repaint();
             }
         });
         
@@ -173,12 +196,33 @@ public class Canvas extends JPanel{
                         text.setText("");
                         selectedMode = Mode.none;
                         break;
+                    case VK_U:
+                        undo();
+                        repaint();
+                        break;
+                    case VK_I:
+                        redo();
+                        repaint();
+                        break;
                 }
               }
         });
         
     }
     
+    private void removeDuplicateShapes(int shapeID){
+        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+            Shape shape = it.next();
+            if (shape.getId() == shapeID) {
+                it.remove();
+            }
+        }
+//        for(Shape shape : shapes){
+//            if(shape.getId() == shapeID){
+//                shapes.remove(shape);
+//            }
+//        }
+    }    
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
              case rectangle:
@@ -225,12 +269,12 @@ public class Canvas extends JPanel{
                 if(area == -1){
                     area = shapes.get(i).getArea();
                     clearSelect();
-                    selectedShape = shapes.get(i).getId();
+                    selectedShape.set(shapes.get(i));
                 }else{
                     if(area > shapes.get(i).getArea()){
                         area = shapes.get(i).getArea();
                         clearSelect();
-                        selectedShape = shapes.get(i).getId();
+                        selectedShape.set(shapes.get(i));
                     }
                 }
             }
@@ -238,9 +282,9 @@ public class Canvas extends JPanel{
         repaint();
     }
     
-    private void drawSelect(Shape shape){
-        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
-    }
+//    private void drawSelect(Shape shape){
+//        newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+//    }
     
     private void clearSelect(){
         int size = shapes.size();
@@ -263,13 +307,30 @@ public class Canvas extends JPanel{
         super.paintComponent(g);
         shapes.stream().map(s -> s.draw(g)).toArray();
         for(Shape shape : shapes){
-            if(shape.getId() == selectedShape){
-                newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
-                select.draw(g); 
+            if(selectedShape != null){
+                if(shape == selectedShape.get()){
+                    newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+                    select.draw(g); 
+                }
             }
         }
          
         
     }  
+    
+    private void undo() {
+        System.out.println(history.peek());
+        Command cmd = history.pop();
+        cmd.undo();
+        future.push(cmd);
+        repaint();
+    }
+    
+    private void redo() {
+        Command cmd = future.pop();
+        cmd.execute();
+        history.push(cmd);
+        repaint();
+    }
     
 }

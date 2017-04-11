@@ -5,6 +5,7 @@
  */
 package designpaint;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author HackSlash
  */
 public class Command_AddRectangle extends Command {
-int id;
+    int id;
     int x;
     int y;
     int w;
@@ -29,18 +30,24 @@ int id;
 
     @Override
     public void execute() {
-        shapes.add(new Rectangle(id, x, y, w, h));
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int width = w - x;
+        int height = h - y;
+        shapes.add(new Rectangle(id, x, y, width, height));
     }
 
     @Override
     public void undo() {
-        for(Shape shape : shapes){
-            if(shape.getId() == id){
-                shapes.remove(shape);
+        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+            Shape shape = it.next();
+            if (shape.getId() == id) {
+                it.remove();
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        for(Shape shape : shapes){
+//            if(shape.getId() == id){
+//                shapes.remove(shape);
+//            }
+//        }
     }
     
 }
