@@ -2,7 +2,11 @@ package designpaint;
 
 import java.awt.Graphics;
 
-public abstract class Shape {
+/**
+ * Base class for all shapes that can be drawn.
+ * @see Canvas
+ */
+public class Shape {
     protected final int id;
     protected int coordinateX;
     protected int coordinateY;
@@ -14,10 +18,10 @@ public abstract class Shape {
     /**
      * Creates a shape at certain coordinates, on a canvas.
      * @param id The id of the shape.
-     * @param coordinates The Coordinates of the shape.
+     * @param originX The X coordinate of the origin of the shape.
+     * @param originY The Y coordinate of the origin of the shape.
      * @param width The width of the shape.
      * @param height Height of the shape.
-     * @param graphics The graphics generator used to create the shape.
      */
     Shape(int id, int originX, int originY, int width, int height) {
         
@@ -31,6 +35,21 @@ public abstract class Shape {
         prepCoordinates(originX, originY, width, height);
     }
     
+    /**
+     * Copy constructor for Shape.
+     * @param shape 
+     */
+    public Shape(Shape shape) {
+        this(shape.getId(), shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
+        //no defensive copies are created here, since 
+        //there are no mutable object fields (String is immutable)
+    }
+    
+    /**
+     * Comparison between objects and this Shape.
+     * @param o Object to compare with
+     * @return Whether the object equals this
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof Shape) {
@@ -41,8 +60,9 @@ public abstract class Shape {
     }
     
     /**
-     * Draws the shape at it's coordinates.
+     * Draws the shape at its coordinates.
      * @param graphics Graphics generator
+     * @return this (for mapping)
      */
     public Shape draw(Graphics graphics) {
         return this;
@@ -82,10 +102,19 @@ public abstract class Shape {
         }
     }
     
+    /**
+     * Calculates the Shape's area
+     * @return The area of the Shape
+     */
     public int getArea(){
         return height * width;
     }
     
+    /**
+     * Moves the Shape by the given offsets.
+     * @param offsetX Offset on X
+     * @param offsetY Offset on Y
+     */
     public void moveShape(int offsetX, int offsetY){
         coordinateX = coordinateX + offsetX;
         coordinateY = coordinateY + offsetY;
@@ -94,6 +123,10 @@ public abstract class Shape {
         originY = originY + offsetY;
     }
     
+    /**
+     * Calculates the midpoint.
+     * @return Midpoint (X coord on index 0, Y coord on index 1)
+     */
     public int[] getMidPoint(){
         int[] mid = new int[2];
         mid[0] = coordinateX + coordinateX + width;
@@ -101,10 +134,15 @@ public abstract class Shape {
         return mid;
     }
     
+    /**
+     * Gets the name of the Shape subclass used to instantiate this.
+     * @return The name of the Shape type
+     */
     public String getShapeType(){
         return this.getClass().getSimpleName();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters">
     public int getId() {
         return id;
     }
@@ -132,7 +170,12 @@ public abstract class Shape {
     public int getHeight() {
         return height;
     }
+    // </editor-fold>
 
+    /**
+     * Generates a String representation of this Shape, that can be saved to a file.
+     * @return String representation of this Shape
+     */
     @Override
     public String toString() {
         return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;

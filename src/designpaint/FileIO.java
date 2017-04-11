@@ -12,7 +12,15 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
+/**
+ * Contains base logic for saving and loading images
+ */
 public class FileIO {
+    /**
+     * Saves the given List to a file with the given name.
+     * @param shapes List of shapes to save
+     * @param name Name of the file (relative to working directory)
+     */
     public static void save(List shapes, String name) {
         String toSave = (String)shapes.stream().map(Object::toString).collect(Collectors.joining("\r\n"));
         Path path = FileSystems.getDefault().getPath(name);
@@ -26,6 +34,11 @@ public class FileIO {
         }
     }
     
+    /**
+     * Loads a list of shapes from a file with the given name.
+     * @param name Name of the file (relative to working directory)
+     * @return List of loaded shapes
+     */
     public static List<Shape> load(String name) {
         Path path = FileSystems.getDefault().getPath(name);
         List<Shape> shapes = new ArrayList();
