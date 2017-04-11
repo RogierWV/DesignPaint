@@ -2,6 +2,8 @@ package designpaint;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -21,7 +23,7 @@ import javax.swing.JPanel;
  * Contains key/mouse listeners and base drawing logic.
  * User can draw shapes on this canvas.
  */
-public class Canvas extends JPanel{
+public class Canvas extends JPanel implements ActionListener{
     
     private int clickX;
     private int clickY;
@@ -343,4 +345,8 @@ public class Canvas extends JPanel{
         repaint();
     }
     
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println(e.getActionCommand());
+    }
 }
