@@ -100,7 +100,9 @@ public class Canvas extends JPanel{
                     case resize:
                         future.clear();
                         if(selectedShape != null){
-                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY());
+                            anchorX = selectedShape.get().getWidth() + selectedShape.get().getCoordinateX();
+                            anchorY = selectedShape.get().getHeight() + selectedShape.get().getCoordinateY();
+                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY(), anchorX, anchorY);
                             latestID++;
                             cmd.execute();
                             history.push(cmd);
@@ -157,7 +159,7 @@ public class Canvas extends JPanel{
                         break;
                     case resize:
                         if(selectedShape != null){
-                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY());
+                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY(), anchorX, anchorY);
                             cmd.execute();
                             history.pop();
                             history.push(cmd);

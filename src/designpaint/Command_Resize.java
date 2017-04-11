@@ -6,15 +6,19 @@ public class Command_Resize extends Command{
     int id;
     int w;
     int h;
+    int anchorX;
+    int anchorY;
     
     int oldW;
     int oldH;
 
-    public Command_Resize(List<Shape> shapes, int id, int w, int h) {
+    public Command_Resize(List<Shape> shapes, int id, int w, int h, int anchorX, int anchorY) {
         super(shapes);
         this.id = id;
         this.w = w;
         this.h = h;
+        this.anchorX = anchorX;
+        this.anchorY = anchorY;
         //System.out.println("Resize Constructor: "+ id);
     }
 
@@ -22,8 +26,8 @@ public class Command_Resize extends Command{
     public void execute() {
         for(Shape shape : shapes){
             if(shape.getId() == id){
-                oldW = shape.getWidth();
-                oldH = shape.getHeight();
+                oldW = anchorX - shape.getCoordinateX();
+                oldH = anchorY - shape.getCoordinateY();
                 
                 int x = shape.getOriginX();
                 int y = shape.getOriginY();
