@@ -44,6 +44,9 @@ public class Canvas extends JPanel{
     Stack<Command> history;
     Stack<Command> future;
     
+    int anchorX = 0;
+    int anchorY = 0;
+    
 
     public Canvas() {
         this.history = new Stack<>();
@@ -82,9 +85,11 @@ public class Canvas extends JPanel{
                         history.push(cmd);
                         break;
                     case move:
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
                         clickX = e.getX();
                         clickY = e.getY();
+                        anchorX = select.coordinateX;
+                        anchorY = select.coordinateY;
                         cmd.execute();
                         history.push(cmd);
                         break;
@@ -137,7 +142,7 @@ public class Canvas extends JPanel{
                     case select:
                         break;
                     case move:
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY);
+                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
                         clickX = e.getX();
                         clickY = e.getY();
                         cmd.execute();
