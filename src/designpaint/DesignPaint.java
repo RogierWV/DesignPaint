@@ -17,7 +17,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class DesignPaint {
     
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "true"); //disable on bad performance
+        //System.setProperty("sun.java2d.opengl", "true"); //disable on bad performance
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
