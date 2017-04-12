@@ -53,8 +53,9 @@ public class Canvas extends JPanel implements ActionListener{
     private JLabel text;
     
     private List<Shape> shapes = new ArrayList();
+    private Composite root;
     private Shape select = new Select(-1, 0, 0, 0, 0);
-    private AtomicReference<Shape> selectedShape;
+    private AtomicReference<Component> selectedShape;
     
     private final Stack<Command> history;
     private final Stack<Command> future;
