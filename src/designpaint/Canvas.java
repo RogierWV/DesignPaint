@@ -49,7 +49,7 @@ public class Canvas extends JPanel implements ActionListener{
         select
     }
     private Mode selectedMode = Mode.none;
-    private JLabel keys;
+    //private JLabel keys;
     private JLabel text;
     
     private List<Shape> shapes = new ArrayList();
@@ -76,18 +76,18 @@ public class Canvas extends JPanel implements ActionListener{
         this.future = new Stack<>();
         this.selectedShape = new AtomicReference<>();
         
-        keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode"
+        /*keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode"
                 + " / M for Move Mode / Z for Resize Mode / F to save canvas \n / L to load canvas"
-                + " / U to undo last action / I to redo last undo");
+                + " / U to undo last action / I to redo last undo");*/
         text = new JLabel("");
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.add(keys);
+        //this.add(keys);
         this.add(text);
-        this.keys.setLocation(10,10);
-        this.text.setLocation(10,25);
+//        this.keys.setLocation(10,10);
+        this.text.setLocation(10,10);
         this.setLayout(null);
-        this.keys.setSize(900, 14);
+//        this.keys.setSize(900, 14);
         this.text.setSize(900, 14);
         setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -348,5 +348,43 @@ public class Canvas extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println(e.getActionCommand());
+        switch(e.getActionCommand()) {
+            case "save":
+                FileIO.save(shapes, "test.txt");
+                break;
+            case "load":
+                shapes = FileIO.load("test.txt");
+                latestID = shapes.size();
+                repaint();
+                break;
+            case "ellipse":
+                text.setText("Ellipse selected");
+                selectedMode = Mode.ellipse;
+                break;
+            case "rectangle":
+                text.setText("Rectangle selected");
+                selectedMode = Mode.rectangle;
+                break;
+            case "select":
+                text.setText("Select Mode");
+                selectedMode = Mode.select;
+                break;
+            case "move":
+                text.setText("Move Mode");
+                selectedMode = Mode.move;
+                break;
+            case "resize":
+                text.setText("Resize Mode");
+                selectedMode = Mode.resize;
+                break;    
+            case "undo":
+                undo();
+                break;
+            case "redo":
+                redo();
+                break;
+            default:
+                break;
+        }
     }
 }
