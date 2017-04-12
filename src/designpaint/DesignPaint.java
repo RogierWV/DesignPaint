@@ -1,9 +1,12 @@
 package designpaint;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JFrame;
-//import javax.swing.JList;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -99,12 +102,20 @@ public class DesignPaint {
         shapeMenu.add(ellipse);
         
         mbar.add(shapeMenu);
+
+        Shape a = new Rectangle(0, 0, 0, 0, 0);
+        Shape b = new Ellipse(0, 0, 0, 0, 0);
+        Shape c = new Rectangle(0, 0, 0, 0, 0);
+        GroupListItem[] testItems = {new GroupListItem(new AtomicReference<>(a)),new GroupListItem(new AtomicReference<>(b)),new GroupListItem(new AtomicReference<>(c))};
         
-//        JList t = new JList();
+        JList t = new JList(testItems);
+        t.setPreferredSize(new Dimension(100, 700));
+        
 
         // add panel to the center of window
-        frame.getContentPane().add("Center", panel);
-//        frame.getContentPane().add(t);
+        panel.setPreferredSize(new Dimension(800, 700));
+        frame.getContentPane().add(panel,BorderLayout.WEST);
+        frame.getContentPane().add(t,BorderLayout.EAST);
         frame.setJMenuBar(mbar);
         frame.setSize(900, 700); // << not working!!!
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
