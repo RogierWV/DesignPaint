@@ -3,7 +3,7 @@ package designpaint;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GroupListItem {
-    AtomicReference<Component> pointer; //TODO: replace with actual class
+    AtomicReference<Component> pointer;
 
     public GroupListItem(AtomicReference<Component> pointer) {
         this.pointer = pointer;

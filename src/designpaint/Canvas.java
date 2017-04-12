@@ -127,9 +127,9 @@ public class Canvas extends JPanel implements ActionListener{
                         break;
                     case move:
                         future.clear();
-                        anchorX = selectedShape.get().getCoordinateX();
-                        anchorY = selectedShape.get().getCoordinateY();
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
+                        anchorX = ((Shape)selectedShape.get()).getCoordinateX();
+                        anchorY = ((Shape)selectedShape.get()).getCoordinateY();
+                        cmd = new Command_Move(shapes, ((Shape)selectedShape.get()).getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
                         clickX = e.getX();
                         clickY = e.getY();
                         cmd.execute();
@@ -138,8 +138,8 @@ public class Canvas extends JPanel implements ActionListener{
                     case resize:
                         future.clear();
                         if(selectedShape != null){
-                            anchorX = selectedShape.get().getWidth() + selectedShape.get().getCoordinateX();
-                            anchorY = selectedShape.get().getHeight() + selectedShape.get().getCoordinateY();
+                            anchorX = ((Shape)selectedShape.get()).getWidth() + ((Shape)selectedShape.get()).getCoordinateX();
+                            anchorY = ((Shape)selectedShape.get()).getHeight() + ((Shape)selectedShape.get()).getCoordinateY();
                             cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY(), anchorX, anchorY);
                             latestID++;
                             cmd.execute();
@@ -148,7 +148,7 @@ public class Canvas extends JPanel implements ActionListener{
                         }
                     case select:    
                         future.clear();
-                        cmd = new Command_Select(shapes, selectedShape, e.getX(), e.getY());
+                        cmd = new Command_Select(shapes, new AtomicReference<Shape>((Shape)selectedShape.get()), e.getX(), e.getY());
                         cmd.execute();
                         history.push(cmd);
                         break;
@@ -191,7 +191,7 @@ public class Canvas extends JPanel implements ActionListener{
                     case select:
                         break;
                     case move:
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
+                        cmd = new Command_Move(shapes, ((Shape)selectedShape.get()).getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
                         clickX = e.getX();
                         clickY = e.getY();
                         cmd.execute();
@@ -200,7 +200,7 @@ public class Canvas extends JPanel implements ActionListener{
                         break;
                     case resize:
                         if(selectedShape != null){
-                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY(), anchorX, anchorY);
+                            cmd = new Command_Resize(shapes, ((Shape)selectedShape.get()).getId(), e.getX(), e.getY(), anchorX, anchorY);
                             cmd.execute();
                             history.pop();
                             history.push(cmd);
@@ -389,7 +389,7 @@ public class Canvas extends JPanel implements ActionListener{
         }
     }
     
-    public void setSelected(AtomicReference<Shape> pointer) {
+    public void setSelected(AtomicReference<Component> pointer) {
         this.selectedShape = pointer;
     }
 }
