@@ -103,13 +103,17 @@ public class DesignPaint {
         
         mbar.add(shapeMenu);
 
-        Shape a = new Rectangle(0, 0, 0, 0, 0);
+        Shape a = new Rectangle(0, 100, 321, 50, 200);
         Shape b = new Ellipse(0, 0, 0, 0, 0);
         Shape c = new Rectangle(0, 0, 0, 0, 0);
         GroupListItem[] testItems = {new GroupListItem(new AtomicReference<>(a)),new GroupListItem(new AtomicReference<>(b)),new GroupListItem(new AtomicReference<>(c))};
         
         JList t = new JList(testItems);
-        t.setPreferredSize(new Dimension(100, 700));
+        t.setPreferredSize(new Dimension(200, 700));
+        t.addListSelectionListener((e) -> {
+            System.out.println(testItems[t.getSelectedIndex()].pointer.get().toString());
+            panel.setSelected((AtomicReference<Shape>)testItems[t.getSelectedIndex()].pointer);
+        });
         
 
         // add panel to the center of window
@@ -117,7 +121,7 @@ public class DesignPaint {
         frame.getContentPane().add(panel,BorderLayout.WEST);
         frame.getContentPane().add(t,BorderLayout.EAST);
         frame.setJMenuBar(mbar);
-        frame.setSize(900, 700); // << not working!!!
+        frame.setSize(1000, 700); // << not working!!!
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true); // make window visible
     }

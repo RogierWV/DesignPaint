@@ -3,14 +3,14 @@ package designpaint;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GroupListItem {
-    AtomicReference<Component> pointer; //TODO: replace with actual class
+    AtomicReference<Shape> pointer; //TODO: replace with actual class
 
-    public GroupListItem(AtomicReference<Component> pointer) {
+    public GroupListItem(AtomicReference<Shape> pointer) {
         this.pointer = pointer;
     }
 
     @Override
     public String toString() {
-        return pointer.get().getClass().getSimpleName();
+        return pointer.get().getClass().getSimpleName()+" "+pointer.get().getArea();
     }
 }
