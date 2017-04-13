@@ -1,14 +1,15 @@
 package designpaint;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Command {
     
-    List<Shape> shapes;
     
-    Command(List<Shape> shapes){
-        this.shapes = shapes;
-    }
+//    Command(List<Shape> shapes){
+//        this.shapes = shapes;
+//    }
+    Command(){}
     
     public abstract void execute();
     public abstract void undo();
