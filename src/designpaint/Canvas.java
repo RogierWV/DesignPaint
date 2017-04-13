@@ -56,8 +56,8 @@ public class Canvas extends JPanel implements ActionListener{
     private AtomicReference<Composite> selectedGroup;
     private AtomicReference<Component> newShape;
     
-    private Stack<Command> history;
-    private Stack<Command> future;
+    private final Stack<Command> history;
+    private final Stack<Command> future;
     
     private int anchorX;
     private int anchorY;
@@ -413,5 +413,9 @@ public class Canvas extends JPanel implements ActionListener{
             default:
                 break;
         }
+    }
+    
+    public void setSelected(AtomicReference<Component> pointer) {
+        this.selectedShape = pointer;
     }
 }

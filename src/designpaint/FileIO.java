@@ -26,11 +26,15 @@ public class FileIO {
         Path path = FileSystems.getDefault().getPath(name);
         try
         {
-            Files.write(path, toSave.getBytes(),StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE,StandardOpenOption.CREATE);
+            Files.write(path, 
+                    toSave.getBytes(),
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE);
         }
         catch (IOException e)
         {
-            System.err.print(e);
+            System.err.println(e);
         }
     }
     
@@ -51,10 +55,18 @@ public class FileIO {
               String[] split = line.split(" ");
               switch(split[0]){
                   case "ellipse":
-                      shapes.add(new Ellipse(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
+                      shapes.add(new Ellipse( 
+                              Integer.parseInt(split[1]), 
+                              Integer.parseInt(split[2]), 
+                              Integer.parseInt(split[3]), 
+                              Integer.parseInt(split[4])));
                       break;
                   case "rectangle" :
-                      shapes.add(new Rectangle(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
+                      shapes.add(new Rectangle(
+                              Integer.parseInt(split[1]), 
+                              Integer.parseInt(split[2]), 
+                              Integer.parseInt(split[3]), 
+                              Integer.parseInt(split[4])));
                       break;
                   default:
                       id--;
@@ -62,7 +74,7 @@ public class FileIO {
               id++;
             }
           } catch (IOException e) {
-            System.out.println(e);
+            System.err.println(e);
           }
         
         
