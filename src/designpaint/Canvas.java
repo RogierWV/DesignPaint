@@ -65,6 +65,8 @@ public class Canvas extends JPanel implements ActionListener{
     private int clickY;
     private int dragX;
     private int dragY;
+    private int oldX;
+    private int oldY;
     private int oldW;
     private int oldH;
     
@@ -80,6 +82,8 @@ public class Canvas extends JPanel implements ActionListener{
         this.clickY = 0;
         this.dragX = 0;
         this.dragY = 0;
+        this.oldX = 0;
+        this.oldY = 0;
         this.oldW = 0;
         this.oldH = 0;
         
@@ -153,7 +157,9 @@ public class Canvas extends JPanel implements ActionListener{
                     case move:
                         if(selectedShape != null){
                             future.clear();
-                            cmd = new Command_Move(selectedShape, x, y);
+                            oldX = selectedShape.get().getX();
+                            oldY = selectedShape.get().getY();
+                            cmd = new Command_Move(selectedShape, clickX, clickY, e.getX(), e.getY(), oldX, oldY);
                             cmd.execute();
                             history.push(cmd);
                             }
@@ -161,6 +167,8 @@ public class Canvas extends JPanel implements ActionListener{
                     case resize:
                         if(selectedShape != null){
                             future.clear();
+                            oldW = selectedShape.get().getX() + selectedShape.get().getW();
+                            oldH = selectedShape.get().getY() + selectedShape.get().getH();
                             cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                             latestID++;
                             cmd.execute();
@@ -211,7 +219,7 @@ public class Canvas extends JPanel implements ActionListener{
                         break;
                     case move:
                         if(selectedShape.get() != null){
-                        cmd = new Command_Move(selectedShape, x, y);
+                        cmd = new Command_Move(selectedShape, clickX, clickY, e.getX(), e.getY(), oldX, oldY);
                         cmd.execute();
                         history.pop();
                         history.push(cmd);
@@ -219,7 +227,7 @@ public class Canvas extends JPanel implements ActionListener{
                         break;
                     case resize:
                         if(selectedShape.get() != null){
-                            cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                            cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                             cmd.execute();
                             history.pop();
                             history.push(cmd);

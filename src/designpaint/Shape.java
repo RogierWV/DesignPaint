@@ -198,7 +198,7 @@ public class Shape implements Component{
     
     @Override
     public int getOX() {
-        return coordinateX;
+        return originX;
     }
 
     @Override
@@ -208,16 +208,16 @@ public class Shape implements Component{
     
     @Override
     public int getOY() {
-        return coordinateX;
+        return originY;
     }
 
     @Override
     public int getW() {
-        return Math.abs(width);
+        return width;
     }
 
     @Override
     public int getH() {
-        return Math.abs(height);
+        return height;
     }
    }
