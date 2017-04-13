@@ -51,10 +51,10 @@ public class FileIO {
               String[] split = line.split(" ");
               switch(split[0]){
                   case "ellipse":
-                      shapes.add(new Ellipse(id, Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
+                      shapes.add(new Ellipse(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
                       break;
                   case "rectangle" :
-                      shapes.add(new Rectangle(id, Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
+                      shapes.add(new Rectangle(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
                       break;
                   default:
                       id--;

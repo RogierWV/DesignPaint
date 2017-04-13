@@ -1,53 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package designpaint;
+import java.util.concurrent.atomic.AtomicReference;
 
-import java.util.Iterator;
-import java.util.List;
-
-/**
- *
- * @author HackSlash
- */
 public class Command_AddRectangle extends Command {
-    int id;
-    int x;
-    int y;
-    int w;
-    int h;
+    AtomicReference<Composite> group;
+    AtomicReference<Component> newShape;
+    Component shape;
 
-    public Command_AddRectangle(List<Shape> shapes, int id, int x, int y, int w, int h) {
-        super(shapes);
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+    public Command_AddRectangle(AtomicReference<Composite> group, AtomicReference<Component> newShape, int x, int y, int w, int h) {
+        int width = w - x;
+        int height = h - y;
+        this.group = group;
+        this.newShape = newShape;
+        this.newShape.set(new Rectangle(x, y, width, height));
+        this.shape = newShape.get();
     }
 
     @Override
     public void execute() {
-        int width = w - x;
-        int height = h - y;
-        shapes.add(new Rectangle(id, x, y, width, height));
+        group.get().add(shape);
     }
 
     @Override
     public void undo() {
-        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
-            Shape shape = it.next();
-            if (shape.getId() == id) {
-                it.remove();
-            }
-        }
-//        for(Shape shape : shapes){
-//            if(shape.getId() == id){
-//                shapes.remove(shape);
-//            }
-//        }
+       group.get().remove(shape);
     }
     
 }

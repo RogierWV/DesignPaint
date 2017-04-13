@@ -7,7 +7,7 @@ import java.awt.Graphics;
  * @see Canvas
  */
 public class Shape implements Component{
-    protected final int id;
+    //protected final int id;
     protected int coordinateX;
     protected int coordinateY;
     protected int width;
@@ -23,9 +23,9 @@ public class Shape implements Component{
      * @param width The width of the shape.
      * @param height Height of the shape.
      */
-    Shape(int id, int originX, int originY, int width, int height) {
+    Shape(int originX, int originY, int width, int height) {
         
-        this.id = id;
+//        this.id = id;
         this.originX = originX;
         this.originY = originY;
         this.coordinateX = originX;
@@ -40,32 +40,32 @@ public class Shape implements Component{
      * @param shape Shape to be copied
      */
     public Shape(Shape shape) {
-        this(shape.getId(), shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
+        this(shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
         //no defensive copies are created here, since 
         //there are no mutable object fields (String is immutable)
     }
     
     /**
-     * Comparison between objects and this Shape.
-     * @param o Object to compare with
-     * @return Whether the object equals this
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Shape) {
-            Shape oShape = (Shape)o;
-            return (this.id == oShape.id);
-        }
-        return false;
-    }
-    
-    /**
      * Draws the shape at its coordinates.
-     * @param graphics Graphics generator
+     * @param g
      * @return this (for mapping)
      */
-    public Shape draw(Graphics graphics) {
-        return this;
+    @Override
+    public void draw(Graphics g) {
+        
+    }
+    
+    @Override
+    public void move(int offsetX, int offsetY){
+        setDimensions(originX + offsetX, originY + offsetY, width, height);
+    }
+    
+    
+    @Override
+    public void resize(int offsetW, int offsetH){
+        int w = width + offsetW;
+        int h = height + offsetH;
+        prepCoordinates(originX, originY, w, h);
     }
     
     /**
@@ -75,31 +75,27 @@ public class Shape implements Component{
      * @param width The width of the shape.
      * @param height The height of the shape.
      */
-    public void setDimensions(int x, int y, int width, int height) {
+    private void setDimensions(int x, int y, int width, int height) {
         this.originX = x;
         this.originY = y;
-        this.width = width;
-        this.height = height;
+//        this.width = width;
+//        this.height = height;
         prepCoordinates(x, y, width, height);
     }
     
     private void prepCoordinates(int x, int y, int w, int h){    
-        if(w < 0){
-            //X
+        if(w <= 0){
             coordinateX = x + w;
-            //W
-            width = Math.abs(w);
         }else{
             coordinateX = x;
         }
-        if(h < 0){
-            //Y
+        if(h <= 0){
             coordinateY = y + h;
-            //H
-            height = Math.abs(h);
         }else{
             coordinateY = y;
         }
+        width = w;//Math.abs(w);
+        height = h;//Math.abs(h);
     }
     
     /**
@@ -111,26 +107,13 @@ public class Shape implements Component{
     }
     
     /**
-     * Moves the Shape by the given offsets.
-     * @param offsetX Offset on X
-     * @param offsetY Offset on Y
-     */
-    public void moveShape(int offsetX, int offsetY){
-        coordinateX = coordinateX + offsetX;
-        coordinateY = coordinateY + offsetY;
-        
-        originX = originX + offsetX;
-        originY = originY + offsetY;
-    }
-    
-    /**
      * Calculates the midpoint.
      * @return Midpoint (X coord on index 0, Y coord on index 1)
      */
     public int[] getMidPoint(){
         int[] mid = new int[2];
-        mid[0] = coordinateX + coordinateX + width;
-        mid[1] = coordinateY + coordinateY + height;
+        mid[0] = coordinateX + width/2;
+        mid[1] = coordinateY + height/2;
         return mid;
     }
     
@@ -143,9 +126,9 @@ public class Shape implements Component{
     }
 
     // <editor-fold defaultstate="collapsed" desc="Getters and setters">
-    public int getId() {
-        return id;
-    }
+//    public int getId() {
+//        return id;
+//    }
 
     public int getCoordinateX() {
         return coordinateX;
@@ -180,5 +163,61 @@ public class Shape implements Component{
     public String toString() {
         return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
     }
+
+    @Override
+    public void print(String prefix) {
+        System.out.println(prefix + toString());
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    } 
+
+    @Override
+    public Component select(int x, int y) {
+        
+        int farX = coordinateX + width;
+        int farY = coordinateY + height;
+        if(getCoordinateX() < x && getCoordinateY() < y && farX > x && farY > y){
+            return this;
+        }
+        return null;
+    }
     
+    @Override
+    public int getSmallestArea(int x, int y){
+        int farX = coordinateX + width;
+        int farY = coordinateY + height;
+        if(getCoordinateX() < x && getCoordinateY() < y && farX > x && farY > y){
+            return getArea();
+        }
+        return -1;
+    }
+
+    @Override
+    public int getX() {
+        return coordinateX;
+    }
+    
+    @Override
+    public int getOX() {
+        return coordinateX;
+    }
+
+    @Override
+    public int getY() {
+        return coordinateY;
+    }
+    
+    @Override
+    public int getOY() {
+        return coordinateX;
+    }
+
+    @Override
+    public int getW() {
+        return Math.abs(width);
+    }
+
+    @Override
+    public int getH() {
+        return Math.abs(height);
+    }
    }

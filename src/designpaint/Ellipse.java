@@ -17,8 +17,8 @@ public class Ellipse extends Shape {
      * @param width The width of the shape.
      * @param height Height of the shape.
      */
-    public Ellipse(int id, int coordinateX, int coordinateY, int width, int height) {
-        super(id, coordinateX, coordinateY, width, height);
+    public Ellipse(int coordinateX, int coordinateY, int width, int height) {
+        super(coordinateX, coordinateY, width, height);
     }
 
     /**
@@ -27,10 +27,10 @@ public class Ellipse extends Shape {
      * @return this (for mapping)
      */
     @Override
-    public Shape draw(Graphics graphics) {
+    public void draw(Graphics graphics) {
         graphics.setColor(Color.black);
-        graphics.drawOval(coordinateX, coordinateY, width, height);
-        return this;
+        graphics.drawOval(coordinateX, coordinateY, Math.abs(width), Math.abs(height));
+        //return this;
     }
     
     /**

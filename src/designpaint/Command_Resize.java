@@ -1,55 +1,45 @@
 package designpaint;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Command_Resize extends Command{
-    int id;
+    AtomicReference<Component> component;
+    Component copy;
     int w;
     int h;
-    int anchorX;
-    int anchorY;
-    
-    int oldW;
+    int currentOffsetW;
+    int currentOffsetH;
+    int nextOffsetW;
+    int nextOffsetH;
     int oldH;
-
-    public Command_Resize(List<Shape> shapes, int id, int w, int h, int anchorX, int anchorY) {
-        super(shapes);
-        this.id = id;
-        this.w = w;
-        this.h = h;
-        this.anchorX = anchorX;
-        this.anchorY = anchorY;
+    int oldW;
+    public Command_Resize(AtomicReference<Component> component, int clickX, int clickY, int x, int y, int oldW, int oldH) {
+        this.component = component;
+        this.copy = copy;
+        this.oldW = oldW;
+        this.oldH = oldH;
+        currentOffsetW = component.get().getOX() + component.get().getW() - oldW;
+        currentOffsetH = component.get().getOY() + component.get().getH() - oldH;
+        nextOffsetW = x - clickX;
+        nextOffsetH = y - clickY;
+        //shapeW = Math.abs(component.get().getW()) + component.get().getX() - oldW;
+        //shapeH = Math.abs(component.get().getH()) + component.get().getY() - oldH;
+        w = x - clickX;
+        h = y - clickY;
         //System.out.println("Resize Constructor: "+ id);
     }
 
     @Override
     public void execute() {
-        for(Shape shape : shapes){
-            if(shape.getId() == id){
-                oldW = anchorX - shape.getCoordinateX();
-                oldH = anchorY - shape.getCoordinateY();
-                
-                int x = shape.getOriginX();
-                int y = shape.getOriginY();
-                int width = w - x;
-                int height = h - y;
-                
-                shape.setDimensions(x, y, width, height);
+        //System.out.println("nextOffsetW:"+w+" currentOffsetW: "+currentOffsetW+" next - current: "+ (nextOffsetW - currentOffsetW) + ""+""+""+""+"");
+        System.out.println(" Component getX: "+component.get().getX()+" + Component getW: "+ component.get().getW() + " - oldW: "+oldW+""+""+""+"");
+        component.get().resize(nextOffsetW - currentOffsetW, nextOffsetH - currentOffsetH);
                 //System.out.println("Resize: " + id + " "+ w + " " + h);
-            }
-        }
     }
 
     @Override
     public void undo() {
-        for(Shape shape : shapes){
-            if(shape.getId() == id){
-                int x = shape.getOriginX();
-                int y = shape.getOriginY();
-                
-                shape.setDimensions(x, y, oldW, oldH);
-            }
-        }
+        component.get().resize(-nextOffsetW, -nextOffsetH);
     }
     
 }

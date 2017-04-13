@@ -19,8 +19,8 @@ public class Select extends Shape {
      * @param width The width of the shape.
      * @param height Height of the shape.
      */
-    public Select(int id, int coordinateX, int coordinateY, int width, int height) {
-        super(id, coordinateX, coordinateY, width, height);
+    public Select( int coordinateX, int coordinateY, int width, int height) {
+        super(coordinateX, coordinateY, width, height);
     }
 
     /**
@@ -29,16 +29,16 @@ public class Select extends Shape {
      * @return this (for mapping)
      */
     @Override
-    public Shape draw(Graphics graphics) {
+    public void draw(Graphics graphics) {
         Graphics2D g2 = (Graphics2D) graphics;
         g2.setColor(Color.red);
         double thickness = 2;
         Stroke oldStroke = g2.getStroke();
         g2.setStroke(new BasicStroke((float) thickness));
         
-        g2.drawRect(coordinateX, coordinateY, width, height);
+        g2.drawRect(coordinateX, coordinateY, Math.abs(width), Math.abs(height));
         g2.setStroke(oldStroke);
-        return this;
+        //return this;
     }
     
     /**

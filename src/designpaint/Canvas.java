@@ -25,10 +25,7 @@ import javax.swing.JPanel;
  */
 public class Canvas extends JPanel implements ActionListener{
     
-    private int clickX;
-    private int clickY;
     
-    private int latestID;
     
     /**
      * Modes for mouse interaction.
@@ -53,15 +50,25 @@ public class Canvas extends JPanel implements ActionListener{
     private JLabel text;
     
     private List<Shape> shapes = new ArrayList();
-    private Shape select = new Select(-1, 0, 0, 0, 0);
-    private AtomicReference<Shape> selectedShape;
+    private Composite root;
+    private Shape select = new Select(0, 0, 0, 0);
+    private AtomicReference<Component> selectedShape;
+    private AtomicReference<Composite> selectedGroup;
+    private AtomicReference<Component> newShape;
     
     private Stack<Command> history;
     private Stack<Command> future;
     
     private int anchorX;
     private int anchorY;
+    private int clickX;
+    private int clickY;
+    private int dragX;
+    private int dragY;
+    private int oldW;
+    private int oldH;
     
+    private int latestID;
     /**
      * Creates an canvas.
      */
@@ -69,12 +76,23 @@ public class Canvas extends JPanel implements ActionListener{
         this.anchorY = 0;
         this.anchorX = 0;
         this.latestID = 0;
-        this.clickY = 0;
         this.clickX = 0;
+        this.clickY = 0;
+        this.dragX = 0;
+        this.dragY = 0;
+        this.oldW = 0;
+        this.oldH = 0;
         
         this.history = new Stack<>();
         this.future = new Stack<>();
-        this.selectedShape = new AtomicReference<>();
+        this.root = new Composite();
+        this.selectedShape = new AtomicReference();
+        this.selectedGroup = new AtomicReference();
+        this.newShape = new AtomicReference();
+        this.selectedShape.set(root);
+        this.selectedGroup.set(root);
+        this.newShape.set(new Rectangle(0, 0, 0, 0));
+        
         
         /*keys = new JLabel("E for Ellipse / R for Rectangle / S for Select Mode"
                 + " / M for Move Mode / Z for Resize Mode / F to save canvas \n / L to load canvas"
@@ -105,6 +123,10 @@ public class Canvas extends JPanel implements ActionListener{
             public void mousePressed(MouseEvent e) {
                 clickX = e.getX();
                 clickY = e.getY();
+                dragX = e.getX();
+                dragY = e.getY();
+                int x = 0;
+                int y = 0;
                 Command cmd;
                 
                 System.out.println("History size: " + history.size());
@@ -112,42 +134,43 @@ public class Canvas extends JPanel implements ActionListener{
                 switch (selectedMode) {
                     case rectangle:
                         future.clear();
-                        cmd = new Command_AddRectangle(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
+                        cmd = new Command_AddRectangle(selectedGroup, newShape, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
+                        oldW = newShape.get().getX() + newShape.get().getW();
+                        oldH = newShape.get().getY() + newShape.get().getH();
                         break;
                     case ellipse:
                         future.clear();
-                        cmd = new Command_AddEllipse(shapes, latestID, e.getX(), e.getY(), e.getX(), e.getY());
+                        cmd = new Command_AddEllipse(selectedGroup, newShape, e.getX(), e.getY(), e.getX(), e.getY());
                         latestID++;
                         cmd.execute();
                         history.push(cmd);
+                        oldW = newShape.get().getX() + newShape.get().getW();
+                        oldH = newShape.get().getY() + newShape.get().getH();
                         break;
                     case move:
-                        future.clear();
-                        anchorX = selectedShape.get().getCoordinateX();
-                        anchorY = selectedShape.get().getCoordinateY();
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
-                        clickX = e.getX();
-                        clickY = e.getY();
-                        cmd.execute();
-                        history.push(cmd);
+                        if(selectedShape != null){
+                            future.clear();
+                            cmd = new Command_Move(selectedShape, x, y);
+                            cmd.execute();
+                            history.push(cmd);
+                            }
                         break;
                     case resize:
-                        future.clear();
                         if(selectedShape != null){
-                            anchorX = selectedShape.get().getWidth() + selectedShape.get().getCoordinateX();
-                            anchorY = selectedShape.get().getHeight() + selectedShape.get().getCoordinateY();
-                            cmd = new Command_Resize(shapes, latestID, e.getX(), e.getY(), anchorX, anchorY);
+                            future.clear();
+                            cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                             latestID++;
                             cmd.execute();
                             history.push(cmd);
                             //drawSelect(rect);
                         }
+                        break;
                     case select:    
                         future.clear();
-                        cmd = new Command_Select(shapes, selectedShape, e.getX(), e.getY());
+                        cmd = new Command_Select(root, selectedShape, e.getX(), e.getY());
                         cmd.execute();
                         history.push(cmd);
                         break;
@@ -167,48 +190,46 @@ public class Canvas extends JPanel implements ActionListener{
             @Override
             public void mouseDragged(MouseEvent e) {
                 Command cmd;
+                int x = e.getX() - dragX;
+                int y = e.getY() - dragY;
                 
                 if(null != selectedMode) 
                 switch (selectedMode) {
                     case rectangle:
-                        removeDuplicateShapes(latestID - 1);
-                        cmd = new Command_AddRectangle(shapes, latestID -1,clickX, clickY, e.getX(), e.getY());
+                        cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                         cmd.execute();
-                        history.pop();
-                        history.push(cmd);
-                        //drawSelect(rect);
-                        repaint();
+                        if(history.peek().getClass().getSimpleName().equals("Command_Resize")){
+                            
+                        }
+
                         break;
                     case ellipse:
-                        removeDuplicateShapes(latestID - 1);
-                        cmd = new Command_AddEllipse(shapes, latestID-1, clickX, clickY, e.getX(), e.getY());
-                        cmd.execute();
-                        history.pop();
-                        history.push(cmd);
-                        repaint();
+                        cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                        cmd.execute();                     
                         break;
                     case select:
                         break;
                     case move:
-                        cmd = new Command_Move(shapes, selectedShape.get().getId(), e.getX(), e.getY(), clickX, clickY, anchorX, anchorY);
-                        clickX = e.getX();
-                        clickY = e.getY();
+                        if(selectedShape.get() != null){
+                        cmd = new Command_Move(selectedShape, x, y);
                         cmd.execute();
                         history.pop();
                         history.push(cmd);
+                        }
                         break;
                     case resize:
-                        if(selectedShape != null){
-                            cmd = new Command_Resize(shapes, selectedShape.get().getId(), e.getX(), e.getY(), anchorX, anchorY);
+                        if(selectedShape.get() != null){
+                            cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                             cmd.execute();
                             history.pop();
                             history.push(cmd);
-                            //drawSelect(rect);
                         }
                         break;
                     default:                        
                         break;
                 }
+                dragX = e.getX();
+                dragY = e.getY();
                 repaint();
             }
         });
@@ -271,11 +292,11 @@ public class Canvas extends JPanel implements ActionListener{
      * @param shapeID ID to be checked for duplicates.
      */
     private void removeDuplicateShapes(int shapeID){
-        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
-            Shape shape = it.next();
-            if (shape.getId() == shapeID)
-                it.remove();
-        }
+//        for (Iterator<Shape> it = shapes.iterator(); it.hasNext(); ) {
+//            Shape shape = it.next();
+//            if (shape.getId() == shapeID)
+//                it.remove();
+//        }
     }    
     
     /**
@@ -289,17 +310,17 @@ public class Canvas extends JPanel implements ActionListener{
     private void newShape(Mode shape, int x, int y, int w, int h){
          switch (shape) {
              case rectangle:
-                 Rectangle rect = new Rectangle(latestID, x, y, w, h);
+                 Rectangle rect = new Rectangle(x, y, w, h);
                  latestID++;
                  shapes.add(rect);
                  break;
              case ellipse:
-                 Ellipse ell = new Ellipse(latestID, x, y, w, h);
+                 Ellipse ell = new Ellipse(x, y, w, h);
                  latestID++;
                  shapes.add(ell);
                  break;
              case select:
-                 Select sel = new Select(-1, x, y, w, h);
+                 Select sel = new Select(x, y, w, h);
                  select = sel;
                  break;
              default:
@@ -315,14 +336,20 @@ public class Canvas extends JPanel implements ActionListener{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        shapes.stream().map(s -> s.draw(g)).toArray();
-        for(Shape shape : shapes){
-            if(selectedShape != null)
-                if(shape == selectedShape.get()){
-                    newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
-                    select.draw(g); 
-                }
-        }
+        root.draw(g);
+        int x = selectedShape.get().getX();
+        int y = selectedShape.get().getY();
+        int w = selectedShape.get().getW();
+        int h = selectedShape.get().getH();
+        select = new Select(x, y, w, h);
+        select.draw(g);
+//        for(Shape shape : shapes){
+//            if(selectedShape != null)
+//                if(shape == selectedShape.get()){
+//                    newShape(Mode.select, shape.getCoordinateX()-1, shape.getCoordinateY()-1, shape.getWidth()+2, shape.getHeight()+2);
+//                    select.draw(g); 
+//                }
+//        }
     }  
     
     /**
