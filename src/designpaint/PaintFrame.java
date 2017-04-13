@@ -25,7 +25,7 @@ public class PaintFrame extends JFrame {
         this.getContentPane().add(panel,BorderLayout.WEST);
         this.getContentPane().add(new GroupList(testItems, panel),BorderLayout.EAST);
         this.setJMenuBar(new PaintMenuBar(panel));
-        this.setSize(1050, 700); // << not working!!!
+        this.setSize(1001, 700); // << not working!!!
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
