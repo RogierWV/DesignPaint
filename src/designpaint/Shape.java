@@ -1,6 +1,9 @@
 package designpaint;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Base class for all shapes that can be drawn.
@@ -179,6 +182,18 @@ public class Shape implements Component{
     @Override
     public String toString() {
         return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
+    }
+
+    @Override
+    public GroupListItem toListItem() {
+        return new GroupListItem(new AtomicReference<>(this));
+    }
+
+    @Override
+    public List<Component> toFlatList() {
+        List<Component> ret = new ArrayList<>();
+        ret.add(this);
+        return ret;
     }
     
    }

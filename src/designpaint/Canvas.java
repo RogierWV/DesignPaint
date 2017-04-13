@@ -29,6 +29,10 @@ public class Canvas extends JPanel implements ActionListener{
     private int clickY;
     
     private int latestID;
+
+    AtomicReference<Composite> getTree() {
+        return new AtomicReference<>(root);
+    }
     
     /**
      * Modes for mouse interaction.
