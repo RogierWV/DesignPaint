@@ -2,6 +2,9 @@ package designpaint;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Composite implements Component{
@@ -82,6 +85,20 @@ public class Composite implements Component{
         for(Component component : components){
             component.draw(g);
         }
+    }
+    
+    public List<Component> toFlatList() {
+//        return Arrays.asList((Component[]) components.stream().map((c) -> c.toFlatList()).toArray());
+        List<Component> ret = new ArrayList<>();
+        for(Component c : components) {
+            ret.addAll(c.toFlatList());
+        }
+        return ret;
+    }
+
+    @Override
+    public GroupListItem toListItem() {
+        return new GroupListItem(new AtomicReference<>(this));
     }
 
     @Override

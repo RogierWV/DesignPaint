@@ -24,9 +24,6 @@ import javax.swing.JPanel;
  * User can draw shapes on this canvas.
  */
 public class Canvas extends JPanel implements ActionListener{
-    
-    
-    
     /**
      * Modes for mouse interaction.
      * options:
@@ -425,5 +422,9 @@ public class Canvas extends JPanel implements ActionListener{
     
     public void setSelected(AtomicReference<Component> pointer) {
         this.selectedShape = pointer;
+    }
+    
+    AtomicReference<Composite> getTree() {
+        return new AtomicReference<>(root);
     }
 }

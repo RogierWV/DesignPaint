@@ -1,9 +1,11 @@
 package designpaint;
 
+import java.util.List;
 import java.awt.Graphics;
-import java.util.ArrayList;
 
 public interface Component {
+    public GroupListItem toListItem();
+    public List<Component> toFlatList();
     public void print(String prefix);
     public void resize(int offsetW, int offsetH);
     public void move(int offsetX, int offsetY);
