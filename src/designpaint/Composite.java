@@ -20,18 +20,24 @@ public class Composite implements Component{
     }
     
     @Override
-    public void print(String prefix)
-    {
+    public String print(String prefix){
+        String result = toString();
+        //System.out.println(this.toString()); 
         if(prefix == null){
-            prefix = "-";
+            prefix = "    ";
         }else{
-            prefix = prefix.concat("-");
+            prefix = prefix.concat("    ");
         }
         for(Component component : components)
         {
-            component.print(prefix);
+            result = result + "\r\n" + component.print(prefix);
             //System.out.println("Ellipse");
         }
+        return result;
+    }
+    
+    public String toString(){
+        return "group " + components.size();
     }
    
 

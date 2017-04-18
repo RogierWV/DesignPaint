@@ -18,11 +18,14 @@ import java.util.ArrayList;
 public class FileIO {
     /**
      * Saves the given List to a file with the given name.
+     * @param root
      * @param shapes List of shapes to save
      * @param name Name of the file (relative to working directory)
      */
-    public static void save(List shapes, String name) {
-        String toSave = (String)shapes.stream().map(Object::toString).collect(Collectors.joining("\r\n"));
+    public static void save(Composite root, String name) {
+        //String toSave = (String)shapes.stream().map(Object::toString).collect(Collectors.joining("\r\n"));
+        String toSave = root.toString();
+        System.out.println(toSave);
         Path path = FileSystems.getDefault().getPath(name);
         try
         {
