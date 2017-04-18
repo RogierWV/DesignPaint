@@ -87,6 +87,7 @@ public class Canvas extends JPanel implements ActionListener{
         this.history = new Stack<>();
         this.future = new Stack<>();
         this.root = new Composite();
+        this.root.setGroup(new AtomicReference<Composite>(root));
         this.selectedShape = new AtomicReference();
         this.selectedGroup = new AtomicReference();
         this.newShape = new AtomicReference();

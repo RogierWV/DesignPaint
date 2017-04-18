@@ -17,6 +17,7 @@ public class Shape implements Component{
     protected int height;
     protected int originX;
     protected int originY;
+    private AtomicReference<Composite> parent;
     
     /**
      * Creates a shape at certain coordinates, on a canvas.
@@ -240,4 +241,14 @@ public class Shape implements Component{
     public void Accept(Visitor v) {
         v.Visit(this);
     }
-   }
+    
+    @Override
+    public AtomicReference<Composite> getGroup() {
+        return this.parent;
+    }
+
+    @Override
+    public void setGroup(AtomicReference<Composite> composite) {
+        this.parent = composite;
+    }
+ }
