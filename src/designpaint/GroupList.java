@@ -15,7 +15,8 @@ public class GroupList extends JList {
         super();
         model = new GroupListModel(panel.getTree(), panel);
         this.setModel(model);
-        this.setPreferredSize(new Dimension(200, 700));
+//        this.setPreferredSize(new Dimension(200, 700));
+        
         this.addListSelectionListener((e) -> {
             System.out.println(model.getItemsRef().get().get(this.getSelectedIndex()).pointer.get().toString());
             panel.setSelected(model.getItemsRef().get().get(this.getSelectedIndex()).pointer);

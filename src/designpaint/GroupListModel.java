@@ -20,10 +20,11 @@ public class GroupListModel extends AbstractListModel {
     public boolean update() {
         List<GroupListItem> olditems = items;
         items.clear();
-        items.add(tree.get().toListItem());
-        tree.get().toFlatList().forEach((c) -> {
-            items.add(c.toListItem());
-        });
+//        items.add(tree.get().toListItem());
+//        tree.get().toFlatList().forEach((c) -> {
+//            items.add(c.toListItem());
+//        });
+        items.addAll(tree.get().toFlatList(""));
         System.out.println(this.items);
         this.fireContentsChanged(items, 0, items.size());
         return items.equals(olditems);

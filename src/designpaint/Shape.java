@@ -168,14 +168,14 @@ public class Shape implements Component{
     }
 
     @Override
-    public GroupListItem toListItem() {
-        return new GroupListItem(new AtomicReference<>(this));
+    public GroupListItem toListItem(String prefix) {
+        return new GroupListItem(new AtomicReference<>(this), prefix+this.getClass().getSimpleName());
     }
 
-    @Override
-    public List<Component> toFlatList() {
-        List<Component> ret = new ArrayList<>();
-        ret.add(this);
+//    @Override
+    public List<GroupListItem> toFlatList(String prefix) {
+        List<GroupListItem> ret = new ArrayList<>();
+        ret.add(this.toListItem(prefix));
         return ret;
     }
     
