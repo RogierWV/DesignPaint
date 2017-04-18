@@ -48,6 +48,6 @@ public class Ellipse extends Shape {
      */
     @Override
     public String toString() {
-        return "ellipse " + coordinateX + " " + coordinateY + " " + width + " " + height;
+        return "ellipse " + coordinateX + " " + coordinateY + " " + (coordinateX + width) + " " + (coordinateY + height);
     }
 }

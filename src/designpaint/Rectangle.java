@@ -48,6 +48,6 @@ public class Rectangle extends Shape {
      */
     @Override
     public String toString() {
-        return "rectangle " + coordinateX + " " + coordinateY + " " + width + " " + height;
+        return "rectangle " + coordinateX + " " + coordinateY + " " + (coordinateX + width) + " " + (coordinateY + height);
     }
 }

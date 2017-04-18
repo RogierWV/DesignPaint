@@ -275,12 +275,14 @@ public class Canvas extends JPanel implements ActionListener{
                         selectedMode = Mode.resize;
                         break;    
                     case VK_F:
-                        root.print("");
+                        //System.out.println(root.print(""));
                         //System.out.println(root.toString());
-                        //FileIO.save(root, "test.txt");
+                        FileIO.save(root, "test.txt");
                         break;
                     case VK_L:
-                        shapes = FileIO.load("test.txt");
+                        System.out.println(root.print(""));
+                        root = FileIO.load("test.txt");
+                        System.out.println(root.print(""));
                         latestID = shapes.size();
                         repaint(); 
                         break;
@@ -393,7 +395,7 @@ public class Canvas extends JPanel implements ActionListener{
                 FileIO.save(root, "test.txt");
                 break;
             case "load":
-                shapes = FileIO.load("test.txt");
+                root = FileIO.load("test.txt");
                 latestID = shapes.size();
                 repaint();
                 break;
