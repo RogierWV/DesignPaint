@@ -164,8 +164,14 @@ public class Canvas extends JPanel implements ActionListener{
                     case resize:
                         if(selectedShape != null){
                             future.clear();
-                            oldW = selectedShape.get().getX() + selectedShape.get().getW();
-                            oldH = selectedShape.get().getY() + selectedShape.get().getH();
+                            int w = selectedShape.get().getW();
+                            int h = selectedShape.get().getH();
+                            if(w < 0)
+                                w = 0;
+                            if(h < 0)
+                                h = 0;
+                            oldW = selectedShape.get().getX() + w;
+                            oldH = selectedShape.get().getY() + h;
                             cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                             latestID++;
                             cmd.execute();
@@ -269,7 +275,9 @@ public class Canvas extends JPanel implements ActionListener{
                         selectedMode = Mode.resize;
                         break;    
                     case VK_F:
-                        FileIO.save(shapes, "test.txt");
+                        root.print("");
+                        //System.out.println(root.toString());
+                        //FileIO.save(root, "test.txt");
                         break;
                     case VK_L:
                         shapes = FileIO.load("test.txt");
@@ -346,7 +354,7 @@ public class Canvas extends JPanel implements ActionListener{
         int y = selectedShape.get().getY();
         int w = selectedShape.get().getW();
         int h = selectedShape.get().getH();
-        select = new Select(x, y, w, h);
+        select = new Select(x, y, Math.abs(w), Math.abs(h));
         select.draw(g);
 //        for(Shape shape : shapes){
 //            if(selectedShape != null)
@@ -382,7 +390,7 @@ public class Canvas extends JPanel implements ActionListener{
         System.out.println(e.getActionCommand());
         switch(e.getActionCommand()) {
             case "save":
-                FileIO.save(shapes, "test.txt");
+                FileIO.save(root, "test.txt");
                 break;
             case "load":
                 shapes = FileIO.load("test.txt");

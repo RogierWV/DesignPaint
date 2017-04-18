@@ -180,9 +180,9 @@ public class Shape implements Component{
     }
     
     @Override
-    public void print(String prefix) {
-        System.out.println(prefix + toString());
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String print(String prefix) {
+        //System.out.println(prefix + toString());
+        return prefix + toString();
     } 
 
     @Override
