@@ -425,6 +425,9 @@ public class Canvas extends JPanel implements ActionListener{
             case "redo":
                 redo();
                 break;
+            case "group":
+                root.add(new Composite());
+                break;
             default:
                 break;
         }

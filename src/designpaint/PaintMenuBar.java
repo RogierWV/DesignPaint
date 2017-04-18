@@ -61,8 +61,8 @@ public class PaintMenuBar extends JMenuBar {
 
         this.add(editMenu);
 
-        JMenu shapeMenu = new JMenu("Shapes");
-        shapeMenu.setMnemonic(VK_S);
+        JMenu shapeMenu = new JMenu("Components");
+        shapeMenu.setMnemonic(VK_C);
 
         JMenuItem rect = new JMenuItem("Rectangle (R)");
         rect.setMnemonic(VK_R);
@@ -75,6 +75,12 @@ public class PaintMenuBar extends JMenuBar {
         ellipse.setActionCommand("ellipse");
         ellipse.addActionListener(panel);
         shapeMenu.add(ellipse);
+        
+        JMenuItem group = new JMenuItem("New group");
+        group.setMnemonic(VK_G);
+        group.setActionCommand("group");
+        group.addActionListener(panel);
+        shapeMenu.add(group);
 
         this.add(shapeMenu);
     }

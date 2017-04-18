@@ -93,18 +93,19 @@ public class Composite implements Component{
         }
     }
     
-    public List<Component> toFlatList() {
+    public List<GroupListItem> toFlatList(String prefix) {
 //        return Arrays.asList((Component[]) components.stream().map((c) -> c.toFlatList()).toArray());
-        List<Component> ret = new ArrayList<>();
+        List<GroupListItem> ret = new ArrayList<>();
+        ret.add(this.toListItem(prefix));
         for(Component c : components) {
-            ret.addAll(c.toFlatList());
+            ret.addAll(c.toFlatList(prefix+"--"));
         }
         return ret;
     }
 
     @Override
-    public GroupListItem toListItem() {
-        return new GroupListItem(new AtomicReference<>(this));
+    public GroupListItem toListItem(String prefix) {
+        return new GroupListItem(new AtomicReference<>(this), prefix+"Group");
     }
 
     @Override
