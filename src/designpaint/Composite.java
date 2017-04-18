@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Composite implements Component{
     private ArrayList<Component> components = new ArrayList<>();
+    private AtomicReference<Composite> parent;
     
     public void Composite(){
         
@@ -16,6 +17,7 @@ public class Composite implements Component{
     
     public void add(Component component)
     {
+        component.setGroup(new AtomicReference<Composite>(this));
         components.add(component);
     }
     
@@ -142,5 +144,15 @@ public class Composite implements Component{
     public int getH() {
         return 0;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AtomicReference<Composite> getGroup() {
+        return this.parent;
+    }
+
+    @Override
+    public void setGroup(AtomicReference<Composite> composite) {
+        this.parent = composite;
     }
 }
