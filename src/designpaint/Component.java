@@ -2,8 +2,11 @@ package designpaint;
 
 import java.util.List;
 import java.awt.Graphics;
+import java.util.concurrent.atomic.AtomicReference;
 
 public interface Component {
+    public AtomicReference<Composite> getGroup();
+    public void setGroup(AtomicReference<Composite> composite);
     public GroupListItem toListItem(String prefix);
     public List<GroupListItem> toFlatList(String prefix);
     public String print(String prefix);
