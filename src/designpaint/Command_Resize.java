@@ -32,7 +32,8 @@ public class Command_Resize extends Command{
     public void undo() {
         currentOffsetW = 0;
         currentOffsetH = 0;
-        component.get().resize(-nextOffsetW, -nextOffsetH);
+        component.get().Accept(new ResizeVisitor(-nextOffsetW, -nextOffsetH));
+        //component.get().resize(-nextOffsetW, -nextOffsetH);
     }
     
 }

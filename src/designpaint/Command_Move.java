@@ -35,7 +35,8 @@ public class Command_Move extends Command{
 
     @Override
     public void undo() {
-        component.get().move(oldX - component.get().getX(), oldY - component.get().getY());
+        //component.get().move(oldX - component.get().getX(), oldY - component.get().getY());
+        component.get().Accept(new MoveVisitor(oldX - component.get().getX(), oldY - component.get().getY()));
     }
        
 }
