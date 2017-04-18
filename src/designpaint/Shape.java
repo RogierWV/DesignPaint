@@ -235,4 +235,9 @@ public class Shape implements Component{
     public int getH() {
         return height;
     }
+
+    @Override
+    public void Accept(Visitor v) {
+        v.Visit(this);
+    }
    }
