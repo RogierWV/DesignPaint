@@ -13,7 +13,6 @@ public class Select extends Shape {
 
     /**
      * Creates a new Select shape.
-     * @param id The id of the shape.
      * @param coordinateX The X coordinate of the origin of the shape.
      * @param coordinateY The Y coordinate of the origin of the shape.
      * @param width The width of the shape.
@@ -26,7 +25,6 @@ public class Select extends Shape {
     /**
      * Draws the shape at its coordinates.
      * @param graphics Graphics generator
-     * @return this (for mapping)
      */
     @Override
     public void draw(Graphics graphics) {
@@ -38,7 +36,6 @@ public class Select extends Shape {
         
         g2.drawRect(coordinateX, coordinateY, Math.abs(width), Math.abs(height));
         g2.setStroke(oldStroke);
-        //return this;
     }
     
     /**
