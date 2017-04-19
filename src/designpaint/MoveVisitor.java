@@ -18,10 +18,4 @@ public class MoveVisitor implements Visitor{
     public void Visit(Component component) {
         component.move(offsetX, offsetY);
     }
-
-    @Override
-    public void Visit(Composite composite) {
-        composite.move(offsetX, offsetY);
-    }
-    
 }
