@@ -60,7 +60,6 @@ public class FileIO {
         //List<Shape> shapes = new ArrayList();
         int id = 0;
         try {
-            System.out.println("WE GAAN LADEN BOIIIIIIIZ");
             List<String> lines = Files.readAllLines(path);
            
             int count = 0;

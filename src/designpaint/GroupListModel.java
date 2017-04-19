@@ -25,7 +25,7 @@ public class GroupListModel extends AbstractListModel {
 //            items.add(c.toListItem());
 //        });
         items.addAll(tree.get().toFlatList(""));
-        System.out.println(this.items);
+        //System.out.println(this.items);
         this.fireContentsChanged(items, 0, items.size());
         return items.equals(olditems);
     }
