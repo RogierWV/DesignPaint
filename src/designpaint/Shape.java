@@ -1,6 +1,11 @@
 package designpaint;
 
 import java.awt.Graphics;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -180,9 +185,11 @@ public class Shape implements Component{
     }
     
     @Override
-    public String print(String prefix) {
+    public String print(String name) {
         //System.out.println(prefix + toString());
-        return prefix + toString();
+        
+//        Path path = FileSystems.getDefault().getPath(name);
+        return "";
     } 
 
     @Override
