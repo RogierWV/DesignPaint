@@ -21,4 +21,6 @@ public interface Component {
     public int getOY();
     public int getW();
     public int getH();
+    
+    public abstract void Accept(Visitor v);
 }

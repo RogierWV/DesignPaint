@@ -28,12 +28,15 @@ public class Command_Move extends Command{
 
     @Override
     public void execute() {
-        component.get().move(-(component.get().getX() - (x-clickX) - oldX), -(component.get().getY() - (y-clickY) - oldY));
+        //component.get().move(-(component.get().getX() - (x-clickX) - oldX), -(component.get().getY() - (y-clickY) - oldY));
+        MoveVisitor move = new MoveVisitor(-(component.get().getX() - (x-clickX) - oldX), -(component.get().getY() - (y-clickY) - oldY));
+        component.get().Accept(move);
     }
 
     @Override
     public void undo() {
-        component.get().move(oldX - component.get().getX(), oldY - component.get().getY());
+        //component.get().move(oldX - component.get().getX(), oldY - component.get().getY());
+        component.get().Accept(new MoveVisitor(oldX - component.get().getX(), oldY - component.get().getY()));
     }
        
 }

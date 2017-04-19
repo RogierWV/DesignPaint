@@ -147,6 +147,13 @@ public class Composite implements Component{
     }
 
     @Override
+    public void Accept(Visitor v) {
+        v.Visit(this);
+        for(Component component : components){
+            component.Accept(v);
+        }
+    }
+    
     public AtomicReference<Composite> getGroup() {
         return this.parent;
     }

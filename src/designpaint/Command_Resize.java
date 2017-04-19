@@ -23,14 +23,17 @@ public class Command_Resize extends Command{
     public void execute() {
 //        System.out.println("nextOffsetW:"+w+" currentOffsetW: "+currentOffsetW+" next - current: "+ (nextOffsetW - currentOffsetW) + ""+""+""+""+"");
 //        System.out.println(" Component getX: "+component.get().getX()+" Component getOX: "+component.get().getOX()+" + Component getW: "+ component.get().getW() + " - oldW: "+oldW+""+""+""+"");
-        component.get().resize(nextOffsetW - currentOffsetW, nextOffsetH - currentOffsetH);
+        //component.get().resize(nextOffsetW - currentOffsetW, nextOffsetH - currentOffsetH);
+        ResizeVisitor resize = new ResizeVisitor(nextOffsetW - currentOffsetW, nextOffsetH - currentOffsetH);
+        component.get().Accept(resize);
     }
 
     @Override
     public void undo() {
         currentOffsetW = 0;
         currentOffsetH = 0;
-        component.get().resize(-nextOffsetW, -nextOffsetH);
+        component.get().Accept(new ResizeVisitor(-nextOffsetW, -nextOffsetH));
+        //component.get().resize(-nextOffsetW, -nextOffsetH);
     }
     
 }

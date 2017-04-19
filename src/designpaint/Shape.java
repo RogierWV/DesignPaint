@@ -236,6 +236,11 @@ public class Shape implements Component{
     public int getH() {
         return height;
     }
+
+    @Override
+    public void Accept(Visitor v) {
+        v.Visit(this);
+    }
     
     @Override
     public AtomicReference<Composite> getGroup() {
@@ -246,4 +251,4 @@ public class Shape implements Component{
     public void setGroup(AtomicReference<Composite> composite) {
         this.parent = composite;
     }
-   }
+ }
