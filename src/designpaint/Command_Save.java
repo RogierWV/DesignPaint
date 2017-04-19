@@ -22,13 +22,11 @@ public class Command_Save extends Command{
 
     @Override
     public void execute() {
-        String toSave = root.toString();
-        System.out.println(toSave);
         Path path = FileSystems.getDefault().getPath(name);
         try
         {
             Files.write(path, 
-                    toSave.getBytes(),
+                    "".getBytes(),
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.CREATE);
@@ -37,6 +35,9 @@ public class Command_Save extends Command{
         {
             System.err.println(e);
         }
+        
+        SaveVisitor save = new SaveVisitor("");
+        root.Accept(save);
     }
 
     @Override
