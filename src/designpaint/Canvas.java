@@ -395,7 +395,9 @@ public class Canvas extends JPanel implements ActionListener{
         System.out.println(e.getActionCommand());
         switch(e.getActionCommand()) {
             case "save":
-                FileIO.save(rootRef.get(), "test.txt");
+                Command cmd = new Command_Save(rootRef.get(), "test.txt");
+                cmd.execute();
+                //FileIO.save(rootRef.get(), "test.txt");
                 break;
             case "load":
                 rootRef.set(FileIO.load("test.txt"));

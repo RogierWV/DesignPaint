@@ -223,7 +223,7 @@ public class Composite implements Component{
 
     @Override
     public void Accept(Visitor v) {
-        v.Visit(this);
+        //v.Visit(this);
         for(Component component : components){
             component.Accept(v);
         }
