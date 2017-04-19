@@ -52,6 +52,7 @@ public class Canvas extends JPanel implements ActionListener{
     private AtomicReference<Component> selectedShape;
     private AtomicReference<Composite> selectedGroup;
     private AtomicReference<Component> newShape;
+    private AtomicReference<Composite> rootRef;
     
     private final Stack<Command> history;
     private final Stack<Command> future;
@@ -87,12 +88,13 @@ public class Canvas extends JPanel implements ActionListener{
         this.history = new Stack<>();
         this.future = new Stack<>();
         this.root = new Composite();
-        this.root.setGroup(new AtomicReference<Composite>(root));
+        this.rootRef = new AtomicReference<>(root);
+        this.root.setGroup(rootRef);
         this.selectedShape = new AtomicReference();
         this.selectedGroup = new AtomicReference();
         this.newShape = new AtomicReference();
-        this.selectedShape.set(root);
-        this.selectedGroup.set(root);
+        this.selectedShape.set(rootRef.get());
+        this.selectedGroup.set(rootRef.get());
         this.newShape.set(new Rectangle(0, 0, 0, 0));
         
         
@@ -182,7 +184,7 @@ public class Canvas extends JPanel implements ActionListener{
                         break;
                     case select:    
                         future.clear();
-                        cmd = new Command_Select(root, selectedShape, e.getX(), e.getY());
+                        cmd = new Command_Select(rootRef.get(), selectedShape, e.getX(), e.getY());
                         cmd.execute();
                         history.push(cmd);
                         break;
@@ -278,11 +280,11 @@ public class Canvas extends JPanel implements ActionListener{
                     case VK_F:
                         //System.out.println(root.print(""));
                         //System.out.println(root.toString());
-                        FileIO.save(root, "test.txt");
+                        FileIO.save(rootRef.get(), "test.txt");
                         break;
                     case VK_L:
                         System.out.println(root.print(""));
-                        root = FileIO.load("test.txt");
+                        rootRef.set(FileIO.load("test.txt"));
                         System.out.println(root.print(""));
                         latestID = shapes.size();
                         repaint(); 
@@ -352,11 +354,11 @@ public class Canvas extends JPanel implements ActionListener{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        root.draw(g);
+        rootRef.get().draw(g);
         int x = selectedShape.get().getX();
         int y = selectedShape.get().getY();
-        int w = selectedShape.get().getW();
-        int h = selectedShape.get().getH();
+        int w = selectedShape.get().getFarX() - x;
+        int h = selectedShape.get().getFarY() - y;
         select = new Select(x, y, Math.abs(w), Math.abs(h));
         select.draw(g);
 //        for(Shape shape : shapes){
@@ -393,11 +395,13 @@ public class Canvas extends JPanel implements ActionListener{
         System.out.println(e.getActionCommand());
         switch(e.getActionCommand()) {
             case "save":
-                FileIO.save(root, "test.txt");
+                FileIO.save(rootRef.get(), "test.txt");
                 break;
             case "load":
-                root = FileIO.load("test.txt");
-                latestID = shapes.size();
+                rootRef.set(FileIO.load("test.txt"));
+//                selectedShape = new AtomicReference<>(root);
+                selectedShape.set(root);
+                //latestID = shapes.size();
                 repaint();
                 break;
             case "ellipse":
@@ -428,10 +432,12 @@ public class Canvas extends JPanel implements ActionListener{
                 redo();
                 break;
             case "group":
+                System.out.println("Selectedshape: " + selectedShape.get());
+                System.out.println("`----> Group: " + selectedShape.get().getGroup());
                 Composite newGroup = new Composite();
                 newGroup.setGroup(new AtomicReference<>(newGroup));
                 System.out.println(selectedShape.get().getGroup());
-                selectedShape.get().getGroup().get().add(newGroup);
+                selectedShape.get().getGroup().get().add(newGroup, true);
                 selectedShape.set(newGroup);
                 selectedGroup.set(newGroup);
                 //root.add(new Composite());
@@ -446,6 +452,6 @@ public class Canvas extends JPanel implements ActionListener{
     }
     
     AtomicReference<Composite> getTree() {
-        return new AtomicReference<>(root);
+        return rootRef;
     }
 }

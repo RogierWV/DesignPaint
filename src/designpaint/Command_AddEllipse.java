@@ -17,7 +17,7 @@ public class Command_AddEllipse extends Command{
 
     @Override
     public void execute() {
-        group.get().add(shape);
+        group.get().add(shape, false);
     }
 
     @Override

@@ -2,7 +2,6 @@ package designpaint;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -15,9 +14,10 @@ public class Composite implements Component{
         
     }
     
-    public void add(Component component)
+    public void add(Component component, boolean group)
     {
-        component.setGroup(new AtomicReference<Composite>(this));
+        if(!group)
+            component.setGroup(new AtomicReference<>(this));
         components.add(component);
     }
     
@@ -52,6 +52,7 @@ public class Composite implements Component{
 
     @Override
     public void move(int offsetX, int offsetY) {
+        System.out.println(offsetX);
         for(Component component : components){
             component.move(offsetX, offsetY);
         }
@@ -112,38 +113,112 @@ public class Composite implements Component{
 
     @Override
     public int getX() {
-        return 0;
+        int x = -1;
+        for(Component component : components){
+            if(x == -1){
+                x = component.getX();
+            }else if(component.getX() < x){
+                x = component.getX();
+            }
+        }
+        return x;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
     public int getOX() {
-        return 0;
+        int originalX = -1;
+        for(Component component : components){
+            if(originalX == -1){
+                originalX = component.getOX();
+            }else if(component.getOX() < originalX){
+                originalX = component.getOX();
+            }
+        }
+        return originalX;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getY() {
-        return 0;
+        int y = -1;
+        for(Component component : components){
+            if(y == -1){
+                y = component.getY();
+            }else if(component.getY() < y){
+                y = component.getY();
+            }
+        }
+        return y;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getOY() {
-        return 0;
+        int originalY = -1;
+        for(Component component : components){
+            if(originalY == -1){
+                originalY = component.getOY();
+            }else if(component.getOY() < originalY){
+                originalY = component.getOY();
+            }
+        }
+        return originalY;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
     public int getW() {
-        return 0;
+        int w = -1;
+        for(Component component : components){
+            if(w == -1){
+                w = component.getW();
+            }else if(component.getW() > w){
+                w = component.getW();
+            }
+        }
+        return w;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getH() {
-        return 0;
+        int h = -1;
+        for(Component component : components){
+            if(h == -1){
+                h = component.getH();
+            }else if(component.getH() > h){
+                h = component.getH();
+            }
+        }
+        return h;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public int getFarX() {
+        int x = -1;
+        for(Component component : components){
+            if(x == -1){
+                x = component.getFarX();
+            }else if(component.getFarX() > x){
+                x = component.getFarX();
+            }
+        }
+        return x;
+    }
+
+    @Override
+    public int getFarY() {
+        int y = -1;
+        for(Component component : components){
+            if(y == -1){
+                y = component.getFarY();
+            }else if(component.getFarY() > y){
+                y = component.getFarY();
+            }
+        }
+        return y;
     }
 
     @Override
@@ -162,4 +237,6 @@ public class Composite implements Component{
     public void setGroup(AtomicReference<Composite> composite) {
         this.parent = composite;
     }
+
+    
 }

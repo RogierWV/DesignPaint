@@ -236,6 +236,16 @@ public class Shape implements Component{
     public int getH() {
         return height;
     }
+    
+    @Override
+    public int getFarX() {
+        return (coordinateX + width);
+    }
+    
+    @Override
+    public int getFarY() {
+        return (coordinateY + height);
+    }
 
     @Override
     public void Accept(Visitor v) {
