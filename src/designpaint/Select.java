@@ -56,6 +56,6 @@ public class Select extends Shape {
      */
     @Override
     public String toString() {
-        return "select " + coordinateX + " " + coordinateY + " " + width + " " + height;
+        return "select " + coordinateX + " " + coordinateY + " " + (coordinateX + width) + " " + (coordinateY + height);
     }
 }

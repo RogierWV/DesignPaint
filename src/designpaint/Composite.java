@@ -23,9 +23,9 @@ public class Composite implements Component{
     
     @Override
     public String print(String prefix){
-        String result = toString();
+        String result = prefix + toString();
         //System.out.println(this.toString()); 
-        if(prefix == null){
+        if(prefix.equals("")){
             prefix = "    ";
         }else{
             prefix = prefix.concat("    ");

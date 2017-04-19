@@ -276,12 +276,14 @@ public class Canvas extends JPanel implements ActionListener{
                         selectedMode = Mode.resize;
                         break;    
                     case VK_F:
-                        root.print("");
+                        //System.out.println(root.print(""));
                         //System.out.println(root.toString());
-                        //FileIO.save(root, "test.txt");
+                        FileIO.save(root, "test.txt");
                         break;
                     case VK_L:
-                        shapes = FileIO.load("test.txt");
+                        System.out.println(root.print(""));
+                        root = FileIO.load("test.txt");
+                        System.out.println(root.print(""));
                         latestID = shapes.size();
                         repaint(); 
                         break;
@@ -394,7 +396,7 @@ public class Canvas extends JPanel implements ActionListener{
                 FileIO.save(root, "test.txt");
                 break;
             case "load":
-                shapes = FileIO.load("test.txt");
+                root = FileIO.load("test.txt");
                 latestID = shapes.size();
                 repaint();
                 break;
@@ -405,6 +407,7 @@ public class Canvas extends JPanel implements ActionListener{
             case "rectangle":
                 text.setText("Rectangle selected");
                 selectedMode = Mode.rectangle;
+                System.out.println(root.print(""));
                 break;
             case "select":
                 text.setText("Select Mode");
@@ -425,7 +428,13 @@ public class Canvas extends JPanel implements ActionListener{
                 redo();
                 break;
             case "group":
-                root.add(new Composite());
+                Composite newGroup = new Composite();
+                newGroup.setGroup(new AtomicReference<>(newGroup));
+                System.out.println(selectedShape.get().getGroup());
+                selectedShape.get().getGroup().get().add(newGroup);
+                selectedShape.set(newGroup);
+                selectedGroup.set(newGroup);
+                //root.add(new Composite());
                 break;
             default:
                 break;
