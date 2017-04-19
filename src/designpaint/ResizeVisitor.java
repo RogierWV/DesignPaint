@@ -14,10 +14,4 @@ public class ResizeVisitor implements Visitor{
     public void Visit(Component component) {
         component.resize(offsetW, offsetH);
     }
-
-    @Override
-    public void Visit(Composite composite) {
-        composite.resize(offsetW, offsetH);
-    }
-    
 }

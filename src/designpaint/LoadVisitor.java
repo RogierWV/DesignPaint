@@ -4,7 +4,7 @@ package designpaint;
  *
  * @author Matthe
  */
-public class SaveVisitor implements Visitor{
+public class LoadVisitor implements Visitor{
 
     @Override
     public void Visit(Component component) {

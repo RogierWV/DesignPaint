@@ -20,8 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FileIO {
     /**
      * Saves the given List to a file with the given name.
-     * @param root
-     * @param shapes List of shapes to save
+     * @param root Group to save
      * @param name Name of the file (relative to working directory)
      */
     public static void save(Composite root, String name) {
