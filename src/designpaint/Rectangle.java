@@ -11,7 +11,6 @@ public class Rectangle extends Shape {
 
     /**
      * Creates a Rectangle at certain coordinates, on a canvas.
-     * @param id The id of the shape.
      * @param coordinateX The X coordinate of the origin of the shape.
      * @param coordinateY The Y coordinate of the origin of the shape.
      * @param width The width of the shape.
@@ -24,13 +23,11 @@ public class Rectangle extends Shape {
     /**
      * Draws the shape at its coordinates.
      * @param graphics Graphics generator
-     * @return this (for mapping)
      */
     @Override
     public void draw(Graphics graphics) {
         graphics.setColor(Color.black);
         graphics.drawRect(coordinateX, coordinateY, Math.abs(width), Math.abs(height));
-        //return this;
     }
     
     /**

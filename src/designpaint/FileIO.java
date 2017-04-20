@@ -1,16 +1,11 @@
 package designpaint;
 
-//import designpaint.Shape;
-//import designpaint.Ellipse;
-//import designpaint.Rectangle;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -55,57 +50,12 @@ public class FileIO {
         AtomicReference<Composite> rootRef = new AtomicReference(root);
         stack.add(rootRef);
         AtomicReference<Component> newShape = new AtomicReference();
-        Command cmd;
-        //List<Shape> shapes = new ArrayList();
-        int id = 0;
         try {
             List<String> lines = Files.readAllLines(path);
-           
-            int count = 0;
-             lines.remove(0);
-            for (String line : lines) {
-                System.out.println(count);
-                count++;
-                //System.out.println(line);
-                int level = line.indexOf(line.trim())/4;
-                
-                if(stack.size() != level){
-                    stack.pop();
-                }
-                
-                String[] split = line.trim().split(" ");
-                System.out.println(line);
-                
-                switch(split[0]){
-                    case "ellipse":
-                        cmd = new Command_AddEllipse(
-                                stack.peek(), 
-                                newShape, 
-                                Integer.parseInt(split[1]), 
-                                Integer.parseInt(split[2]), 
-                                Integer.parseInt(split[3]), 
-                                Integer.parseInt(split[4]));
-                        cmd.execute();
-                        break;
-                    case "rectangle" :
-                        cmd = new Command_AddRectangle(
-                                stack.peek(), 
-                                newShape, 
-                                Integer.parseInt(split[1]), 
-                                Integer.parseInt(split[2]), 
-                                Integer.parseInt(split[3]), 
-                                Integer.parseInt(split[4]));
-                        cmd.execute();
-                        break;
-                    case "group" :
-                        Composite newGroup = new Composite();
-                        AtomicReference<Composite> ref = new AtomicReference(newGroup);
-                        stack.add(ref);
-                        //root.add()
-                    default:
-                        id--;
-              }
-              id++;
+            
+            lines.remove(0);
+            for(int i = 0; i < lines.size();) {
+                i+=parse(lines,i,stack,newShape,rootRef);
             }
           } catch (IOException e) {
             System.err.println(e);
@@ -115,5 +65,49 @@ public class FileIO {
         return root;
     }
     
+    private static int parse(List<String> lines, int linesIndex, Stack<AtomicReference<Composite>> stack, AtomicReference<Component> newShape, AtomicReference<Composite> rootRef) {
+        Command cmd;
+        String line = lines.get(linesIndex);
+        String[] split = line.trim().split(" ");
+
+        switch(split[0]){
+            case "ellipse":
+                cmd = new Command_AddEllipse(
+                        stack.peek(), 
+                        newShape, 
+                        Integer.parseInt(split[1]), 
+                        Integer.parseInt(split[2]), 
+                        Integer.parseInt(split[3]), 
+                        Integer.parseInt(split[4]));
+                cmd.execute();
+                break;
+            case "rectangle" :
+                cmd = new Command_AddRectangle(
+                        stack.peek(), 
+                        newShape, 
+                        Integer.parseInt(split[1]), 
+                        Integer.parseInt(split[2]), 
+                        Integer.parseInt(split[3]), 
+                        Integer.parseInt(split[4]));
+                cmd.execute();
+                break;
+            case "group" :
+                Composite newGroup = new Composite();
+                stack.peek().get().add(newGroup, true);
+                AtomicReference<Composite> ref = new AtomicReference(newGroup);
+                stack.push(ref);
+                int count = 1;
+                for(int i = linesIndex+1; i <= linesIndex+Integer.parseInt(split[1]);) {
+                    int linesProcessed = parse(lines, i, stack, newShape, rootRef);
+                    count += linesProcessed;
+                    i += linesProcessed;
+                }
+                stack.pop();
+                return count;
+            default:
+                break;
+        }
+        return 1;
+    }
     
 }

@@ -57,7 +57,6 @@ public class Shape implements Component{
     /**
      * Draws the shape at its coordinates.
      * @param g
-     * @return this (for mapping)
      */
     @Override
     public void draw(Graphics g) {
@@ -178,7 +177,7 @@ public class Shape implements Component{
         return new GroupListItem(new AtomicReference<>(this), prefix+this.getClass().getSimpleName());
     }
 
-//    @Override
+    @Override
     public List<GroupListItem> toFlatList(String prefix) {
         List<GroupListItem> ret = new ArrayList<>();
         ret.add(this.toListItem(prefix));
