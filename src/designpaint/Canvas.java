@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  * Contains key/mouse listeners and base drawing logic.
  * User can draw shapes on this canvas.
  */
-public class Canvas extends JPanel implements ActionListener{
+public class Canvas extends JPanel implements ActionListener {
     /**
      * Modes for mouse interaction.
      * options:
@@ -336,7 +336,8 @@ public class Canvas extends JPanel implements ActionListener{
                 break;
             case "load":
                 rootRef.set(FileIO.load("test.txt"));
-                selectedShape.set(root);
+                selectedShape.set(rootRef.get());
+                selectedGroup.set(rootRef.get());
                 repaint();
                 break;
             case "ellipse":
