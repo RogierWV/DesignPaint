@@ -18,6 +18,7 @@ public class Composite implements Component{
     {
         if(!group)
             component.setGroup(new AtomicReference<>(this));
+//        if(!(component instanceof Composite)) component.setGroup(new AtomicReference<>(this));
         components.add(component);
     }
     
@@ -223,7 +224,7 @@ public class Composite implements Component{
 
     @Override
     public void Accept(Visitor v) {
-        //v.Visit(this);
+        v.Visit(this);
         for(Component component : components){
             component.Accept(v);
         }
