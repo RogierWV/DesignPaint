@@ -8,8 +8,16 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+/**
+ * Main window for the application
+ */
 public class PaintFrame extends JFrame {
 
+    /**
+     * Creates a new window with a given title
+     * @param title Title for the window
+     * @throws HeadlessException Thrown when the JRE doesn't support graphics
+     */
     public PaintFrame(String title) throws HeadlessException {
         super(title);
         

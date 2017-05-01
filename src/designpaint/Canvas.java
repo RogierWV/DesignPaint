@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BorderFactory;
@@ -41,26 +39,20 @@ public class Canvas extends JPanel implements ActionListener {
         resize,
         select
     }
-    private Mode selectedMode = Mode.none;
-    private JLabel text;
+    private Mode selectedMode;
+    private final JLabel text;
     
-    private List<Shape> shapes;
-    private Composite root;
     private Shape select = new Select(0, 0, 0, 0);
     private AtomicReference<Component> selectedShape;
-    private AtomicReference<Composite> selectedGroup;
-    private AtomicReference<Component> newShape;
-    private AtomicReference<Composite> rootRef;
+    private final AtomicReference<Composite> selectedGroup;
+    private final AtomicReference<Component> newShape;
+    private final AtomicReference<Composite> rootRef;
     
     private final Stack<Command> history;
     private final Stack<Command> future;
     
-    private int anchorX;
-    private int anchorY;
     private int clickX;
     private int clickY;
-    private int dragX;
-    private int dragY;
     private int oldX;
     private int oldY;
     private int oldW;
@@ -70,23 +62,21 @@ public class Canvas extends JPanel implements ActionListener {
      * Creates an canvas.
      */
     public Canvas() {
-        this.shapes = new ArrayList();
-        this.anchorY = 0;
-        this.anchorX = 0;
+        //initializers - zero
+        this.selectedMode = Mode.none;
         this.clickX = 0;
         this.clickY = 0;
-        this.dragX = 0;
-        this.dragY = 0;
         this.oldX = 0;
         this.oldY = 0;
         this.oldW = 0;
         this.oldH = 0;
         
+        //initializers - new
         this.history = new Stack<>();
         this.future = new Stack<>();
-        this.root = new Composite();
+        Composite root = new Composite();
         this.rootRef = new AtomicReference<>(root);
-        this.root.setGroup(rootRef);
+        this.rootRef.get().setGroup(rootRef);
         this.selectedShape = new AtomicReference();
         this.selectedGroup = new AtomicReference();
         this.newShape = new AtomicReference();
@@ -94,6 +84,7 @@ public class Canvas extends JPanel implements ActionListener {
         this.selectedGroup.set(rootRef.get());
         this.newShape.set(new Rectangle(0, 0, 0, 0));
         
+        //initializers - GUI
         text = new JLabel("");
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -103,6 +94,7 @@ public class Canvas extends JPanel implements ActionListener {
         this.text.setSize(900, 14);
         setBorder(BorderFactory.createLineBorder(Color.black));
 
+        //initializers - listeners
         mouse_press();
         mouse_drag();
         key_press();
@@ -118,10 +110,6 @@ public class Canvas extends JPanel implements ActionListener {
             public void mousePressed(MouseEvent e) {
                 clickX = e.getX();
                 clickY = e.getY();
-                dragX = e.getX();
-                dragY = e.getY();
-                int x = 0;
-                int y = 0;
                 Command cmd;
                 
                 System.out.println("History size: " + history.size());
@@ -189,8 +177,6 @@ public class Canvas extends JPanel implements ActionListener {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Command cmd;
-                int x = e.getX() - dragX;
-                int y = e.getY() - dragY;
                 
                 if(null != selectedMode) 
                 switch (selectedMode) {
@@ -226,8 +212,6 @@ public class Canvas extends JPanel implements ActionListener {
                     default:                        
                         break;
                 }
-                dragX = e.getX();
-                dragY = e.getY();
                 repaint();
             }
         });
@@ -262,15 +246,15 @@ public class Canvas extends JPanel implements ActionListener {
                         selectedMode = Mode.resize;
                         break;    
                     case VK_F:
-                        //System.out.println(root.print(""));
-                        //System.out.println(root.toString());
-                        FileIO.save(rootRef.get(), "test.txt");
+                        Command cmd = new Command_Save(rootRef.get(), "test.txt");
+                        cmd.execute();
                         break;
                     case VK_L:
-                        System.out.println(root.print(""));
                         rootRef.set(FileIO.load("test.txt"));
-                        System.out.println(root.print(""));
-                        repaint(); 
+                        selectedShape.set(rootRef.get());
+                        selectedGroup.set(rootRef.get());
+                        rootRef.get().setGroup(rootRef);
+                        repaint();
                         break;
                     case VK_ESCAPE:
                         text.setText("");
@@ -285,6 +269,62 @@ public class Canvas extends JPanel implements ActionListener {
                 }
               }
         });
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch(e.getActionCommand()) {
+            case "save":
+                Command cmd = new Command_Save(rootRef.get(), "test.txt");
+                cmd.execute();
+                break;
+            case "load":
+                rootRef.set(FileIO.load("test.txt"));
+                selectedShape.set(rootRef.get());
+                selectedGroup.set(rootRef.get());
+                rootRef.get().setGroup(rootRef);
+                repaint();
+                break;
+            case "ellipse":
+                text.setText("Ellipse selected");
+                selectedMode = Mode.ellipse;
+                break;
+            case "rectangle":
+                text.setText("Rectangle selected");
+                selectedMode = Mode.rectangle;
+                break;
+            case "select":
+                text.setText("Select Mode");
+                selectedMode = Mode.select;
+                break;
+            case "move":
+                text.setText("Move Mode");
+                selectedMode = Mode.move;
+                break;
+            case "resize":
+                text.setText("Resize Mode");
+                selectedMode = Mode.resize;
+                break;    
+            case "undo":
+                undo();
+                break;
+            case "redo":
+                redo();
+                break;
+            case "group":
+                System.out.println("Selectedshape: " + selectedShape.get());
+                System.out.println("`----> Group: " + selectedShape.get().getGroup());
+                Composite newGroup = new Composite();
+                newGroup.setGroup(new AtomicReference<>(newGroup));
+                System.out.println(selectedShape.get().getGroup());
+                selectedShape.get().getGroup().get().add(newGroup);
+                selectedShape.set(newGroup);
+                selectedGroup.set(newGroup);
+                //root.add(new Composite());
+                break;
+            default:
+                break;
+        }
     }
     // </editor-fold>
     
@@ -325,69 +365,11 @@ public class Canvas extends JPanel implements ActionListener {
         repaint();
     }
     
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        System.out.println(e.getActionCommand());
-        switch(e.getActionCommand()) {
-            case "save":
-                Command cmd = new Command_Save(rootRef.get(), "test.txt");
-                cmd.execute();
-                //FileIO.save(rootRef.get(), "test.txt");
-                break;
-            case "load":
-                rootRef.set(FileIO.load("test.txt"));
-                selectedShape.set(rootRef.get());
-                selectedGroup.set(rootRef.get());
-                repaint();
-                break;
-            case "ellipse":
-                text.setText("Ellipse selected");
-                selectedMode = Mode.ellipse;
-                break;
-            case "rectangle":
-                text.setText("Rectangle selected");
-                selectedMode = Mode.rectangle;
-                System.out.println(root.print(""));
-                break;
-            case "select":
-                text.setText("Select Mode");
-                selectedMode = Mode.select;
-                break;
-            case "move":
-                text.setText("Move Mode");
-                selectedMode = Mode.move;
-                break;
-            case "resize":
-                text.setText("Resize Mode");
-                selectedMode = Mode.resize;
-                break;    
-            case "undo":
-                undo();
-                break;
-            case "redo":
-                redo();
-                break;
-            case "group":
-                System.out.println("Selectedshape: " + selectedShape.get());
-                System.out.println("`----> Group: " + selectedShape.get().getGroup());
-                Composite newGroup = new Composite();
-                newGroup.setGroup(new AtomicReference<>(newGroup));
-                System.out.println(selectedShape.get().getGroup());
-                selectedShape.get().getGroup().get().add(newGroup, true);
-                selectedShape.set(newGroup);
-                selectedGroup.set(newGroup);
-                //root.add(new Composite());
-                break;
-            default:
-                break;
-        }
-    }
-    
     public void setSelected(AtomicReference<Component> pointer) {
         this.selectedShape = pointer;
     }
     
-    AtomicReference<Composite> getTree() {
+    AtomicReference<Composite> getRoot() {
         return rootRef;
     }
 }

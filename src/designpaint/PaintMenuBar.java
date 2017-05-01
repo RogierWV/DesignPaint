@@ -5,8 +5,18 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+/**
+ * Menu bar for the application
+ */
 public class PaintMenuBar extends JMenuBar {
+    
+    /**
+     * Creates a new menu bar
+     * @param panel Canvas to be used as listener
+     */
     public PaintMenuBar(Canvas panel) {
+        super();
+        this.setFocusable(false);
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(VK_F);
 

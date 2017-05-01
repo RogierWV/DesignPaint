@@ -93,7 +93,7 @@ public class FileIO {
                 break;
             case "group" :
                 Composite newGroup = new Composite();
-                stack.peek().get().add(newGroup, true);
+                stack.peek().get().add(newGroup);
                 AtomicReference<Composite> ref = new AtomicReference(newGroup);
                 stack.push(ref);
                 int count = 1;

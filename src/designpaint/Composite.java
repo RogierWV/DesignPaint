@@ -5,113 +5,158 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-
+/**
+ * Item that contains components (group).
+ */
 public class Composite implements Component{
-    private ArrayList<Component> components = new ArrayList<>();
+    private final ArrayList<Component> components;
     private AtomicReference<Composite> parent;
-    
-    public void Composite(){
-        
+
+    /**
+     * Default constructor.
+     */
+    public Composite() {
+        this.components = new ArrayList<>();
     }
     
-    public void add(Component component, boolean group)
+    /**
+     * Add component to composite.
+     * @param component Component to add to the composite.
+     */
+    public void add(Component component)
     {
-        if(!group)
-            component.setGroup(new AtomicReference<>(this));
-//        if(!(component instanceof Composite)) component.setGroup(new AtomicReference<>(this));
+        if(!(component instanceof Composite)) component.setGroup(new AtomicReference<>(this));
         components.add(component);
     }
     
+    /**
+     * Recursive ToString method.
+     * @param prefix prefix for recursiveness.
+     * @return string representation of the object.
+     */
     @Override
     public String print(String prefix){
         String result = prefix + toString();
-        //System.out.println(this.toString()); 
-        if(prefix.equals("")){
+        if(prefix.equals(""))
             prefix = "    ";
-        }else{
+        else
             prefix = prefix.concat("    ");
-        }
+        
         for(Component component : components)
-        {
             result = result + "\r\n" + component.print(prefix);
-            //System.out.println("Ellipse");
-        }
         return result;
     }
     
+    /**
+     * Returns a string representation of the object.
+     * @return string representation of object.
+     */
+    @Override
     public String toString(){
         return "group " + components.size();
     }
    
-
+    /**
+     * Resizes the composite.
+     * @param offsetW width offset to resize by.
+     * @param offsetH height offset to resize by.
+     */
     @Override
     public void resize(int offsetW, int offsetH) {
-        for(Component component : components){
-            component.resize(offsetW, offsetH);
-        }
+//        components.forEach((component) -> component.resize(offsetW, offsetH));
     }
 
+    /**
+     * Moves the composite.
+     * @param offsetX X offset to move to.
+     * @param offsetY Y offset to move to
+     */
     @Override
     public void move(int offsetX, int offsetY) {
-        System.out.println(offsetX);
-        for(Component component : components){
-            component.move(offsetX, offsetY);
-        }
+//        System.out.println(offsetX);
+//        components.forEach((component) -> component.move(offsetX, offsetY));
     }
     
+    /**
+     * Remove component from composite.
+     * @param component 
+     */
     public void remove(Component component){
         components.remove(component);
     }
     
+    /**
+     * Selects a component that is within this composite, and closest to the cursor.
+     * @param x cursor location.
+     * @param y cursor location.
+     * @return Selected Component.
+     */
     @Override
     public Component select(int x, int y){
-        ArrayList<Component> selectableShapes;
         Component selected = null;
-        for(Component component : components){
-            if(selected == null){
+        for(Component component : components)
+            if(selected == null)
                 selected = component.select(x, y);
-            }else if(component.getSmallestArea(x, y) < selected.getSmallestArea(x, y) && component.getSmallestArea(x, y) != -1){
+            else if(component.getSmallestArea(x, y) < selected.getSmallestArea(x, y) && component.getSmallestArea(x, y) != -1)
                 selected = component.select(x, y);
-            }
-        }
         return selected;
     }
 
+    /**
+     * Returns the area of a component that is within this composite, and closest to the cursor.
+     * @param x cursor location.
+     * @param y cursor location.
+     * @return the area of a component that is within this composite, and closest to the cursor.
+     */
     @Override
     public int getSmallestArea(int x, int y) {
         int smallestArea = -1;
-        for(Component component : components){
-            if(smallestArea == -1){
+        for(Component component : components)
+            if(smallestArea == -1)
                 smallestArea = component.getSmallestArea(x, y);
-            }else if(component.getSmallestArea(x, y) < smallestArea){
+            else if(component.getSmallestArea(x, y) < smallestArea)
                 smallestArea = component.getSmallestArea(x, y);
-            }
-        }
         return smallestArea;
     }
 
+    /**
+     * Draws the composite's components on the canvas.
+     * @param g 
+     */
     @Override
     public void draw(Graphics g) {
-        for(Component component : components){
-            component.draw(g);
-        }
+        components.parallelStream().forEach((component) -> component.draw(g));
     }
     
+    /**
+     * Returns the components in this composite as a FlatList.
+     * @param prefix prefix for redundancy.
+     * @return a FlatList of GroupListItems
+     */
+    @Override
     public List<GroupListItem> toFlatList(String prefix) {
-//        return Arrays.asList((Component[]) components.stream().map((c) -> c.toFlatList()).toArray());
         List<GroupListItem> ret = new ArrayList<>();
         ret.add(this.toListItem(prefix));
-        for(Component c : components) {
-            ret.addAll(c.toFlatList(prefix+"--"));
-        }
+        components.parallelStream().forEachOrdered((Component c) -> ret.addAll(c.toFlatList(prefix+"--")));
+//        ret.addAll(components.parallelStream().map((Component c) -> {
+//            return c.toFlatList(prefix+"--");
+//        }).flatMap((List<GroupListItem> li) -> {
+//            return li.stream();
+//        }).collect(Collectors.toList()));
         return ret;
     }
 
+    /**
+     * Returns the components in this composite as a List.
+     * @param prefix prefix for redundancy.
+     * @return a List of GroupListItems
+     */
     @Override
     public GroupListItem toListItem(String prefix) {
         return new GroupListItem(new AtomicReference<>(this), prefix+"Group");
     }
 
+    //standard getters & settters
     @Override
     public int getX() {
         int x = -1;
@@ -123,7 +168,6 @@ public class Composite implements Component{
             }
         }
         return x;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
@@ -137,7 +181,6 @@ public class Composite implements Component{
             }
         }
         return originalX;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -151,7 +194,6 @@ public class Composite implements Component{
             }
         }
         return y;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -165,7 +207,6 @@ public class Composite implements Component{
             }
         }
         return originalY;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
@@ -179,7 +220,6 @@ public class Composite implements Component{
             }
         }
         return w;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -193,7 +233,6 @@ public class Composite implements Component{
             }
         }
         return h;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
@@ -221,15 +260,8 @@ public class Composite implements Component{
         }
         return y;
     }
-
-    @Override
-    public void Accept(Visitor v) {
-        v.Visit(this);
-        for(Component component : components){
-            component.Accept(v);
-        }
-    }
     
+    @Override
     public AtomicReference<Composite> getGroup() {
         return this.parent;
     }
@@ -239,5 +271,14 @@ public class Composite implements Component{
         this.parent = composite;
     }
 
-    
+    /**
+     * Accept function for visitor.
+     * @param v Visitor to accept.
+     */
+    @Override
+    public void Accept(Visitor v) {
+        v.Visit(this);
+//        components.forEach((Component component) -> component.Accept(v));
+        components.parallelStream().forEach(c -> c.Accept(v));
+    }
 }

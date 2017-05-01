@@ -10,7 +10,7 @@ public class GroupListModel extends AbstractListModel {
     AtomicReference<Composite> tree;
     List<GroupListItem> items;
     
-    public GroupListModel(AtomicReference<Composite> tree, Canvas panel) {
+    public GroupListModel(AtomicReference<Composite> tree) {
         super();
         this.items = new ArrayList<GroupListItem>();
         this.tree = tree;

@@ -195,8 +195,8 @@ public class Shape implements Component{
     @Override
     public Component select(int x, int y) {
         
-        int farX = coordinateX + width;
-        int farY = coordinateY + height;
+        int farX = coordinateX + Math.abs(width);
+        int farY = coordinateY + Math.abs(height);
         if(getCoordinateX() < x && getCoordinateY() < y && farX > x && farY > y){
             return this;
         }
@@ -205,8 +205,8 @@ public class Shape implements Component{
     
     @Override
     public int getSmallestArea(int x, int y){
-        int farX = coordinateX + width;
-        int farY = coordinateY + height;
+        int farX = coordinateX + Math.abs(width);
+        int farY = coordinateY + Math.abs(height);
         if(getCoordinateX() < x && getCoordinateY() < y && farX > x && farY > y){
             return getArea();
         }
@@ -245,12 +245,12 @@ public class Shape implements Component{
     
     @Override
     public int getFarX() {
-        return (coordinateX + width);
+        return (coordinateX + Math.abs(width));
     }
     
     @Override
     public int getFarY() {
-        return (coordinateY + height);
+        return (coordinateY + Math.abs(height));
     }
 
     @Override

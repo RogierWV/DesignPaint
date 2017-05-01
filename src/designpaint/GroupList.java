@@ -4,23 +4,26 @@ import java.awt.Dimension;
 import javax.swing.JList;
 
 /**
- *
- * @author snyx
+ * JList to display groups
  */
 public class GroupList extends JList {
     
     GroupListModel model;
-
+    
+    /**
+     * Creates new GroupList
+     * @param panel Canvas to use for the model
+     */
     public GroupList(Canvas panel) {
         super();
-        model = new GroupListModel(panel.getTree(), panel);
+        this.setFocusable(false);
+        model = new GroupListModel(panel.getRoot());
         this.setModel(model);
-//        this.setPreferredSize(new Dimension(200, 700));
         
         this.addListSelectionListener((e) -> {
-            //System.out.println(model.getItemsRef().get().get(this.getSelectedIndex()).pointer.get().toString());
             panel.setSelected(model.getItemsRef().get().get(this.getSelectedIndex()).pointer);
         });
+        // Start a new thread to update the list
         new Thread(() -> {
             while(true){
                 if(model.update()) panel.repaint();
