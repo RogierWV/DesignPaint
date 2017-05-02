@@ -3,7 +3,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Command to add an Ellipse
- * @see Ellipse
  */
 public class Command_AddEllipse extends Command {
     AtomicReference<Composite> group;

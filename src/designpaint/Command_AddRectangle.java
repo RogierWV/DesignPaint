@@ -3,7 +3,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Command to add an Rectangle
- * @see Rectangle
  */
 public class Command_AddRectangle extends Command {
     AtomicReference<Composite> group;
