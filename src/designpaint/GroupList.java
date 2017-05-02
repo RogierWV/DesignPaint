@@ -1,6 +1,5 @@
 package designpaint;
 
-import java.awt.Dimension;
 import javax.swing.JList;
 
 /**

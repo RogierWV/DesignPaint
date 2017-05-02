@@ -322,6 +322,9 @@ public class Canvas extends JPanel implements ActionListener {
                 selectedGroup.set(newGroup);
                 //root.add(new Composite());
                 break;
+            case "decorate":
+                rootRef.get().add(new Decorator("test", selectedShape.get()));
+                break;
             default:
                 break;
         }
