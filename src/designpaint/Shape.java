@@ -1,11 +1,6 @@
 package designpaint;
 
 import java.awt.Graphics;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Base class for all shapes that can be drawn.
  * @see Canvas
+ * @see ShapeStrategy
  */
 public class Shape implements Component{
     //protected final int id;
@@ -23,6 +19,7 @@ public class Shape implements Component{
     protected int originX;
     protected int originY;
     private AtomicReference<Composite> parent;
+    private ShapeStrategy strat;
     
     /**
      * Creates a shape at certain coordinates, on a canvas.
@@ -32,7 +29,7 @@ public class Shape implements Component{
      * @param width The width of the shape.
      * @param height Height of the shape.
      */
-    Shape(int originX, int originY, int width, int height) {
+    Shape(int originX, int originY, int width, int height, ShapeStrategy strategy) {
         
 //        this.id = id;
         this.originX = originX;
@@ -41,6 +38,7 @@ public class Shape implements Component{
         this.coordinateY = originY;
         this.width = width;
         this.height = height;
+        this.strat = strategy;
         prepCoordinates(originX, originY, width, height);
     }
     
@@ -49,7 +47,7 @@ public class Shape implements Component{
      * @param shape Shape to be copied
      */
     public Shape(Shape shape) {
-        this(shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight());
+        this(shape.getOriginX(), shape.getOriginY(), shape.getWidth(), shape.getHeight(), shape.getStrategy());
         //no defensive copies are created here, since 
         //there are no mutable object fields (String is immutable)
     }
@@ -60,7 +58,7 @@ public class Shape implements Component{
      */
     @Override
     public void draw(Graphics g) {
-        
+        strat.draw(g, this);
     }
     
     @Override
@@ -169,12 +167,15 @@ public class Shape implements Component{
      */
     @Override
     public String toString() {
-        return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
+//        return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
+        return strat.toString(this);
     }
 
     @Override
     public GroupListItem toListItem(String prefix) {
-        return new GroupListItem(new AtomicReference<>(this), prefix+this.getClass().getSimpleName());
+        String n = strat.toString(this).split(" ")[0];
+        n = n.substring(0, 1).toUpperCase() + n.substring(1);
+        return new GroupListItem(new AtomicReference<>(this), prefix+n);
     }
 
     @Override
@@ -211,6 +212,10 @@ public class Shape implements Component{
             return getArea();
         }
         return -1;
+    }
+    
+    public ShapeStrategy getStrategy() {
+        return strat;
     }
 
     @Override

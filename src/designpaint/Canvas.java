@@ -42,7 +42,7 @@ public class Canvas extends JPanel implements ActionListener {
     private Mode selectedMode;
     private final JLabel text;
     
-    private Shape select = new Select(0, 0, 0, 0);
+    private Shape select = new Shape(0, 0, 0, 0, SelectionBoxStrategy.getInstance());
     private AtomicReference<Component> selectedShape;
     private final AtomicReference<Composite> selectedGroup;
     private final AtomicReference<Component> newShape;
@@ -82,7 +82,7 @@ public class Canvas extends JPanel implements ActionListener {
         this.newShape = new AtomicReference();
         this.selectedShape.set(rootRef.get());
         this.selectedGroup.set(rootRef.get());
-        this.newShape.set(new Rectangle(0, 0, 0, 0));
+        this.newShape.set(new Shape(0, 0, 0, 0, RectangleStrategy.getInstance()));
         
         //initializers - GUI
         text = new JLabel("");
@@ -341,7 +341,7 @@ public class Canvas extends JPanel implements ActionListener {
         int y = selectedShape.get().getY();
         int w = selectedShape.get().getFarX() - x;
         int h = selectedShape.get().getFarY() - y;
-        select = new Select(x, y, Math.abs(w), Math.abs(h));
+        select = new Shape(x, y, Math.abs(w), Math.abs(h), SelectionBoxStrategy.getInstance());
         select.draw(g);
     }  
     
