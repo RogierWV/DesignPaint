@@ -50,4 +50,9 @@ public class SelectionBoxStrategy extends ShapeStrategy {
         return "select " + s.coordinateX + " " + s.coordinateY + " " + (s.coordinateX + s.width) + " " + (s.coordinateY + s.height);
     }
 
+    @Override
+    public String getName() {
+        return "Select";
+    }
+
 }

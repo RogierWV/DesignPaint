@@ -30,6 +30,11 @@ public class RectangleStrategy extends ShapeStrategy {
         g.setColor(Color.black);
         g.drawRect(s.coordinateX, s.coordinateY, Math.abs(s.width), Math.abs(s.height));
     }
+    
+    @Override
+    public String getName() {
+        return "Rectangle";
+    }
 
     /**
      * Return string representation of Shape s

@@ -10,8 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see Canvas
  * @see ShapeStrategy
  */
-public class Shape implements Component{
-    //protected final int id;
+public class Shape implements Component {
     protected int coordinateX;
     protected int coordinateY;
     protected int width;
@@ -167,15 +166,12 @@ public class Shape implements Component{
      */
     @Override
     public String toString() {
-//        return "generic " + coordinateX + " " + coordinateY + " " + width + " " + height;
         return strat.toString(this);
     }
 
     @Override
     public GroupListItem toListItem(String prefix) {
-        String n = strat.toString(this).split(" ")[0];
-        n = n.substring(0, 1).toUpperCase() + n.substring(1);
-        return new GroupListItem(new AtomicReference<>(this), prefix+n);
+        return new GroupListItem(new AtomicReference<>(this), prefix+strat.getName());
     }
 
     @Override

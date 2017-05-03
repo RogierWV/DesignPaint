@@ -27,7 +27,7 @@ public class GroupList extends JList {
             while(true){
                 if(model.update()) panel.repaint();
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     System.out.println(ex.getMessage());
                 }

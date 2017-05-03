@@ -40,4 +40,9 @@ public class EllipseStrategy extends ShapeStrategy {
     public String toString(Shape s) {
         return "ellipse " + s.coordinateX + " " + s.coordinateY + " " + (s.coordinateX + s.width) + " " + (s.coordinateY + s.height);
     }
+
+    @Override
+    public String getName() {
+        return "Ellipse";
+    }
 }

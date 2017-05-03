@@ -273,9 +273,10 @@ public class Canvas extends JPanel implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        Command cmd;
         switch(e.getActionCommand()) {
             case "save":
-                Command cmd = new Command_Save(rootRef.get(), "test.txt");
+                cmd = new Command_Save(rootRef.get(), "test.txt");
                 cmd.execute();
                 break;
             case "load":
@@ -320,10 +321,11 @@ public class Canvas extends JPanel implements ActionListener {
                 selectedShape.get().getGroup().get().add(newGroup);
                 selectedShape.set(newGroup);
                 selectedGroup.set(newGroup);
-                //root.add(new Composite());
                 break;
             case "decorate":
-                rootRef.get().add(new Decorator("test", selectedShape.get()));
+                cmd = new Command_AddAnnotation(selectedShape.get(), "default annotation text");
+                cmd.execute();
+                history.push(cmd);
                 break;
             default:
                 break;

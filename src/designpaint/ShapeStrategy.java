@@ -21,6 +21,12 @@ public abstract class ShapeStrategy {
     public abstract void draw(Graphics g, Shape s);
     
     /**
+     * Gets the name to be used for menus
+     * @return Name
+     */
+    public abstract String getName();
+    
+    /**
      * Return string representation of Shape s
      * @param s Shape to return string representation of
      * @return String representation of s

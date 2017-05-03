@@ -21,6 +21,10 @@ public class GroupListItem {
         this.printedName = name;
     }
 
+    public void setPointer(AtomicReference<Component> p) {
+        pointer = p;
+    }
+    
     /**
      * Returns the name of this item
      * @return name given during creation

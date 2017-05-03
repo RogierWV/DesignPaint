@@ -6,6 +6,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -69,6 +70,7 @@ public class FileIO {
         Command cmd;
         String line = lines.get(linesIndex);
         String[] split = line.trim().split(" ");
+        int count = 1;
 
         switch(split[0]){
             case "ellipse":
@@ -96,18 +98,30 @@ public class FileIO {
                 stack.peek().get().add(newGroup);
                 AtomicReference<Composite> ref = new AtomicReference(newGroup);
                 stack.push(ref);
-                int count = 1;
                 for(int i = linesIndex+1; i <= linesIndex+Integer.parseInt(split[1]);) {
                     int linesProcessed = parse(lines, i, stack, newShape, rootRef);
                     count += linesProcessed;
                     i += linesProcessed;
                 }
                 stack.pop();
-                return count;
+                break;
+            case "ornament":
+                AtomicReference<Component> newC = new AtomicReference<>();
+                System.out.println("line "+linesIndex);
+                System.out.println("split: " + Arrays.toString(split));
+                count += parse(lines, linesIndex+1, stack, newC, rootRef);
+//                Annotation d = new Annotation(split[2], newC.get());
+//                newShape.set(d);
+//                stack.push(d);
+                String s = "";
+                for(int i = 2; i < split.length; i++) s += split[i].replace('"', ' ').trim() + " ";
+                Command add_cmd = new Command_AddAnnotation(newC.get(), s);
+                add_cmd.execute();
+                break;
             default:
                 break;
         }
-        return 1;
+        return count;
     }
     
 }

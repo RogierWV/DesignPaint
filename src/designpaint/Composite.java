@@ -19,6 +19,10 @@ public class Composite implements Component{
         this.components = new ArrayList<>();
     }
     
+    public boolean contains(Component c) {
+        return components.contains(c);
+    }
+    
     /**
      * Add component to composite.
      * @param component Component to add to the composite.
@@ -161,6 +165,7 @@ public class Composite implements Component{
     public int getX() {
         int x = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(x == -1){
                 x = component.getX();
             }else if(component.getX() < x){
@@ -174,6 +179,7 @@ public class Composite implements Component{
     public int getOX() {
         int originalX = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(originalX == -1){
                 originalX = component.getOX();
             }else if(component.getOX() < originalX){
@@ -187,6 +193,7 @@ public class Composite implements Component{
     public int getY() {
         int y = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(y == -1){
                 y = component.getY();
             }else if(component.getY() < y){
@@ -200,6 +207,7 @@ public class Composite implements Component{
     public int getOY() {
         int originalY = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(originalY == -1){
                 originalY = component.getOY();
             }else if(component.getOY() < originalY){
@@ -213,6 +221,7 @@ public class Composite implements Component{
     public int getW() {
         int w = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(w == -1){
                 w = component.getW();
             }else if(component.getW() > w){
@@ -226,6 +235,7 @@ public class Composite implements Component{
     public int getH() {
         int h = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(h == -1){
                 h = component.getH();
             }else if(component.getH() > h){
@@ -239,6 +249,7 @@ public class Composite implements Component{
     public int getFarX() {
         int x = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(x == -1){
                 x = component.getFarX();
             }else if(component.getFarX() > x){
@@ -252,6 +263,7 @@ public class Composite implements Component{
     public int getFarY() {
         int y = -1;
         for(Component component : components){
+            if(component instanceof Annotation) continue;
             if(y == -1){
                 y = component.getFarY();
             }else if(component.getFarY() > y){

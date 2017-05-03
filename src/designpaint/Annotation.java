@@ -8,19 +8,24 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * 
  */
-public class Decorator implements Component {
+public class Annotation implements Component {
 
     private final String text;
     private final Component sub;
 
-    public Decorator(String text, Component c) {
+    public Annotation(String text, Component c) {
         this.text = text;
         this.sub = c;
     }
     
     @Override
     public GroupListItem toListItem(String prefix) {
-        return new GroupListItem(new AtomicReference<>(this), prefix+text);
+//        String name = sub.toString().split(" ")[0];
+//        name = name.substring(0,1).toUpperCase() + name.substring(1);
+//        return new GroupListItem(new AtomicReference<>(this), prefix+name);
+        GroupListItem item = sub.toListItem(prefix);
+        item.setPointer(new AtomicReference<>(this));
+        return item;
     }
 
     @Override
@@ -48,7 +53,8 @@ public class Decorator implements Component {
 
     @Override
     public Component select(int x, int y) {
-        return sub.select(x, y);
+        if(sub.select(x, y) == null) return null;
+        else return this;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class Decorator implements Component {
     @Override
     public void draw(Graphics g) {
         g.drawString(text, sub.getX(), sub.getY());
-//        sub.draw(g);
+        if(!(sub instanceof Composite)) sub.draw(g);
     }
 
     @Override
@@ -115,11 +121,11 @@ public class Decorator implements Component {
     @Override
     public void Accept(Visitor v) {
         v.Visit(this);
-        sub.Accept(v);
+        if(!(sub instanceof Composite)) sub.Accept(v);
     }
     
     @Override
     public String toString() {
-        return "ornament top " + text + "\r\n" + sub.toString();
+        return "ornament top \"" + text + "\"";
     }
 }
