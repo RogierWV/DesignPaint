@@ -20,9 +20,6 @@ public class Annotation implements Component {
     
     @Override
     public GroupListItem toListItem(String prefix) {
-//        String name = sub.toString().split(" ")[0];
-//        name = name.substring(0,1).toUpperCase() + name.substring(1);
-//        return new GroupListItem(new AtomicReference<>(this), prefix+name);
         GroupListItem item = sub.toListItem(prefix);
         item.setPointer(new AtomicReference<>(this));
         return item;
@@ -37,19 +34,14 @@ public class Annotation implements Component {
 
     @Override
     public String print(String prefix) {
-//        return sub.print(prefix);
         return null;
     }
 
     @Override
-    public void resize(int offsetW, int offsetH) {
-//        sub.resize(offsetW, offsetH);
-    }
+    public void resize(int offsetW, int offsetH) {}
 
     @Override
-    public void move(int offsetX, int offsetY) {
-//        sub.move(offsetX, offsetY);
-    }
+    public void move(int offsetX, int offsetY) {}
 
     @Override
     public Component select(int x, int y) {

@@ -1,6 +1,7 @@
 package designpaint;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +14,9 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * Main component of the application.
@@ -323,9 +326,24 @@ public class Canvas extends JPanel implements ActionListener {
                 selectedGroup.set(newGroup);
                 break;
             case "decorate":
-                cmd = new Command_AddAnnotation(selectedShape.get(), "default annotation text");
-                cmd.execute();
-                history.push(cmd);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JPanel panel = new JPanel();
+                        panel.add(new JLabel("Text: "));
+                        JTextField textfield = new JTextField(24);
+                        panel.add(textfield);
+
+                        int result = JOptionPane.showConfirmDialog(null, panel, "Annotation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        switch (result) {
+                            case JOptionPane.OK_OPTION:
+                                Command cmd = new Command_AddAnnotation(selectedShape.get(), textfield.getText());
+                                cmd.execute();
+                                history.push(cmd);
+                                break;
+                        }
+                    }
+                });
                 break;
             default:
                 break;
