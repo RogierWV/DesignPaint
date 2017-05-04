@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Annotation implements Component {
 
-    private final String text;
-    private final Component sub;
+    protected final String text;
+    protected final Component sub;
 
     public Annotation(String text, Component c) {
         this.text = text;
@@ -56,8 +56,6 @@ public class Annotation implements Component {
 
     @Override
     public void draw(Graphics g) {
-        g.drawString(text, sub.getX(), sub.getY());
-        if(!(sub instanceof Composite)) sub.draw(g);
     }
 
     @Override
