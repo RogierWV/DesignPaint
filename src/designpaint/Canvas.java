@@ -183,35 +183,35 @@ public class Canvas extends JPanel implements ActionListener {
                 Command cmd;
                 
                 if(null != selectedMode) 
-                switch (selectedMode) {
-                    case rectangle:
-                        cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
-                        cmd.execute();
-                        break;
-                    case ellipse:
-                        cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
-                        cmd.execute();
-                        break;
-                    case select:
-                        break;
-                    case move:
-                        if(selectedShape.get() != null){
-                        cmd = new Command_Move(selectedShape, clickX, clickY, e.getX(), e.getY(), oldX, oldY);
-                        cmd.execute();
-                        history.pop();
-                        history.push(cmd);
-                        } break;
-                    case resize:
-                        if(selectedShape.get() != null){
-                            cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                    switch (selectedMode) {
+                        case rectangle:
+                            cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                            cmd.execute();
+                            break;
+                        case ellipse:
+                            cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                            cmd.execute();
+                            break;
+                        case select:
+                            break;
+                        case move:
+                            if(selectedShape.get() != null){
+                            cmd = new Command_Move(selectedShape, clickX, clickY, e.getX(), e.getY(), oldX, oldY);
                             cmd.execute();
                             history.pop();
                             history.push(cmd);
-                        }
-                        break;
-                    default:                        
-                        break;
-                }
+                            } break;
+                        case resize:
+                            if(selectedShape.get() != null){
+                                cmd = new Command_Resize(selectedShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
+                                cmd.execute();
+                                history.pop();
+                                history.push(cmd);
+                            }
+                            break;
+                        default:                        
+                            break;
+                    }
                 repaint();
             }
         });

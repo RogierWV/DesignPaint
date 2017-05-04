@@ -27,5 +27,4 @@ public class AnnotationRight extends Annotation {
     public String toString() {
         return "ornament right \"" + text + "\"";
     }
-    
 }

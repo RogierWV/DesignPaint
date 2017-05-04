@@ -129,7 +129,7 @@ public class Composite implements Component{
      */
     @Override
     public void draw(Graphics g) {
-        components.parallelStream().forEach((component) -> component.draw(g));
+        components.forEach((component) -> component.draw(g));
     }
     
     /**
