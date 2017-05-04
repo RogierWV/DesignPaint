@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -186,14 +187,10 @@ public class Canvas extends JPanel implements ActionListener {
                     case rectangle:
                         cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
                         cmd.execute();
-                        if(history.peek().getClass().getSimpleName().equals("Command_Resize")){
-                            
-                        }
-
                         break;
                     case ellipse:
                         cmd = new Command_Resize(newShape, clickX, clickY, e.getX(), e.getY(), oldW, oldH);
-                        cmd.execute();                     
+                        cmd.execute();
                         break;
                     case select:
                         break;
@@ -333,11 +330,15 @@ public class Canvas extends JPanel implements ActionListener {
                         panel.add(new JLabel("Text: "));
                         JTextField textfield = new JTextField(24);
                         panel.add(textfield);
-
-                        int result = JOptionPane.showConfirmDialog(null, panel, "Annotation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        String[] locs = { "top", "left", "right", "bottom" };
+                        JComboBox locSel = new JComboBox(locs);
+                        locSel.setSelectedIndex(0);
+                        panel.add(locSel);
+                        
+                        int result = JOptionPane.showConfirmDialog(null, panel, "Annotation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                         switch (result) {
                             case JOptionPane.OK_OPTION:
-                                Command cmd = new Command_AddAnnotation(selectedShape.get(), textfield.getText());
+                                Command cmd = new Command_AddAnnotation(selectedShape.get(), textfield.getText(), (String)locSel.getSelectedItem(), selectedShape);
                                 cmd.execute();
                                 history.push(cmd);
                                 break;

@@ -107,16 +107,11 @@ public class FileIO {
                 break;
             case "ornament":
                 AtomicReference<Component> newC = new AtomicReference<>();
-                System.out.println("line "+linesIndex);
-                System.out.println("split: " + Arrays.toString(split));
                 count += parse(lines, linesIndex+1, stack, newC, rootRef);
-//                Annotation d = new Annotation(split[2], newC.get());
-//                newShape.set(d);
-//                stack.push(d);
                 String s = "";
                 for(int i = 2; i < split.length; i++) s += split[i].replace('"', ' ').trim() + " ";
-                Command add_cmd = new Command_AddAnnotation(newC.get(), s);
-                add_cmd.execute();
+                cmd = new Command_AddAnnotation(newC.get(), s, split[1], newShape);
+                cmd.execute();
                 break;
             default:
                 break;

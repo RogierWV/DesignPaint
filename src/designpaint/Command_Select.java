@@ -33,7 +33,8 @@ public class Command_Select extends Command {
      */
     @Override
     public void execute() {
-        selectedShape.set(root.select(x, y));
+        Component c = root.select(x, y);
+        if(c!=null) selectedShape.set(c);
     }
 
     /**

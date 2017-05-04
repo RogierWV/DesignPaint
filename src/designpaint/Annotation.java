@@ -116,6 +116,6 @@ public class Annotation implements Component {
     
     @Override
     public String toString() {
-        return "ornament top \"" + text + "\"";
+        return "ornament unkown \"" + text + "\"";
     }
 }
